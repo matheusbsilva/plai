@@ -1,0 +1,2 @@
+jupyter==1.0.0
+lark-parser==0.7.7
