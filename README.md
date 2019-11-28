@@ -23,10 +23,10 @@ def fn(x: int):
 # Inline function definition
 fn(x: int) = 2 * x + 1
 
-# Specifing colums type of a dataset
+# Specifing columns type of a dataset
 #
 # Expression can be used to specify a certain type
-# to all colums that match the pattern
+# to all columns that match the pattern
 type T = {
     timestamp: datetime,
     name: str,

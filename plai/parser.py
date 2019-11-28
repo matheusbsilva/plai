@@ -3,15 +3,19 @@ from lark import Lark
 grammar = r"""
 start : expr
 
-?expr : func
+expr : func
       | atom
-      | pipe
+      | pipeline
 
-func : SYMBOL "(" (atom ("," atom)*)? ")"
+func : SYMBOL args
 
-pipe : func "|>" expr
+args : "(" (atom ("," atom)*)? ")"
 
-?atom : NUMBER
+pipeline : "pipeline" args ":" block
+
+block : expr*
+
+atom : NUMBER
       | STRING
       | SYMBOL
 
