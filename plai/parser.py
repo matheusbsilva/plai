@@ -1,6 +1,8 @@
 from lark import Lark
 from lark import InlineTransformer
 
+from .symbol import Symbol
+
 grammar = r"""
 ?start : expr
 
@@ -48,3 +50,6 @@ class PlaiTransformer(InlineTransformer):
         return token[1:-1].replace('\\"', '"')\
                 .replace('\\n', '\n')\
                 .replace('\\t', '\t')
+
+    def symbol(self, token):
+        return Symbol(token)
