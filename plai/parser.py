@@ -3,17 +3,21 @@ from lark import Lark
 grammar = r"""
 start : expr
 
-expr : func
+expr : function_defition
+      | function_call
       | atom
       | pipeline
 
-func : SYMBOL args
+function_defition : "def" SYMBOL args ":" block
+function_call : SYMBOL args
 
-args : "(" (atom ("," atom)*)? ")"
+args : "(" (arg("," arg)*)? ")"
+
+arg : atom (":" atom)?
 
 pipeline : "pipeline" args ":" block
 
-block : expr*
+block : expr+
 
 atom : NUMBER
       | STRING
