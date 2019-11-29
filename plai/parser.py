@@ -68,3 +68,6 @@ class PlaiTransformer(InlineTransformer):
 
     def assignment(self, name, *stmt):
         return [Symbol('='), Symbol(name), *stmt]
+
+    def var(self, token):
+        return Symbol(token)
