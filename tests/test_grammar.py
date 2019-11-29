@@ -39,3 +39,12 @@ class TestBasicExp:
 
     def test_precedence_using_parentheses(self):
         assert parse('(2 + 5) * 3') == [Symbol('*'), [Symbol('+'), 2, 5], 3]
+
+
+class TestFunctionCall:
+    def test_basic_function_call(self):
+        assert parse('foo(1)') == [Symbol('foo'), [1]]
+        assert parse('foo(1, 2)') == [Symbol('foo'), [1, 2]]
+
+    def test_exp_as_argument(self):
+        assert parse('foo(1+2, 8*5)') == [Symbol('foo'), [[Symbol('+'), 1, 2], [Symbol('*'), 8, 5]]]

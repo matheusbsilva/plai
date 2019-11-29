@@ -4,28 +4,20 @@ from lark import InlineTransformer
 from .symbol import Symbol
 
 grammar = r"""
-?start : expr
+?start : stmt
 
-?stmt: expr
+?stmt : expr
       | function_call
-      | atom
-      | pipeline
 
-function_call : NAME args
+function_call : NAME "(" arguments? ")"
 
-args : "(" (arg("," arg)*)? ")"
-
-arg : atom (":" atom)?
-
-pipeline : "pipeline" args ":" block
-
-block : stmt+
+arguments : expr("," expr)*
 
 ?term : term _mult_op atom -> binop
-     | atom
+      | atom
 
 ?expr : expr _sum_op term -> binop
-     | term
+      | term
 
 ?atom : NUMBER -> number
       | STRING -> string
@@ -61,3 +53,9 @@ class PlaiTransformer(InlineTransformer):
 
     def binop(self, left, op, right):
         return [Symbol(op), left, right]
+
+    def arguments(self, *args):
+        return [*args]
+
+    def function_call(self, name, args):
+        return [Symbol(name), args]
