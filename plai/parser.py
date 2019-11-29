@@ -6,13 +6,12 @@ from .symbol import Symbol
 grammar = r"""
 ?start : expr
 
-?expr : function_defition
+?stmt: expr
       | function_call
       | atom
       | pipeline
 
-function_defition : "def" SYMBOL args ":" block
-function_call : SYMBOL args
+function_call : NAME args
 
 args : "(" (arg("," arg)*)? ")"
 
@@ -20,16 +19,24 @@ arg : atom (":" atom)?
 
 pipeline : "pipeline" args ":" block
 
-block : expr+
+block : stmt+
+
+?term : term _mult_op atom -> binop
+     | atom
+
+?expr : expr _sum_op term -> binop
+     | term
 
 ?atom : NUMBER -> number
       | STRING -> string
-      | SYMBOL -> symbol
+      | NAME -> var
 
-SYMBOL : /[-+!@$\/\\*%^&~<>|=\w]+/
+!_sum_op :  "+" | "-"
+!_mult_op : "*" | "/"
 
-%import common.SIGNED_NUMBER -> NUMBER
+%import common.NUMBER -> NUMBER
 %import common.ESCAPED_STRING -> STRING
+%import common.CNAME -> NAME
 
 %ignore /\s/
 """
@@ -51,5 +58,5 @@ class PlaiTransformer(InlineTransformer):
                 .replace('\\n', '\n')\
                 .replace('\\t', '\t')
 
-    def symbol(self, token):
-        return Symbol(token)
+    def binop(self, left, op, right):
+        return [Symbol(op), left, right]
