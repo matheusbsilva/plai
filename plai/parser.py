@@ -8,8 +8,11 @@ grammar = r"""
 
 ?stmt : expr
       | function_call
+      | assignment
 
 function_call : NAME "(" arguments? ")"
+
+assignment : NAME "=" stmt
 
 arguments : expr("," expr)*
 
@@ -43,6 +46,9 @@ def parse(src):
 
 class PlaiTransformer(InlineTransformer):
 
+    def start(self, *args):
+        return [*args]
+
     def number(self, token):
         return float(token)
 
@@ -59,3 +65,6 @@ class PlaiTransformer(InlineTransformer):
 
     def function_call(self, name, args):
         return [Symbol(name), args]
+
+    def assignment(self, name, *stmt):
+        return [Symbol('='), Symbol(name), *stmt]
