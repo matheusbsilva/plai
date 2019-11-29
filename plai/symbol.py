@@ -10,3 +10,9 @@ class Symbol:
             cls.CACHE[data] = new = super().__new__(cls)
             new._data = data
             return new
+
+    def __repr__(self):
+        return self._data
+
+
+Symbol.PIPELINE = Symbol('pipeline')

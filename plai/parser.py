@@ -4,17 +4,20 @@ from lark import InlineTransformer
 from .symbol import Symbol
 
 grammar = r"""
-?start : stmt
+?start : stmt+
 
 ?stmt : expr
       | function_call
       | assignment
+      | pipeline
 
 function_call : NAME "(" arguments? ")"
 
 assignment : NAME "=" stmt
 
 arguments : expr("," expr)*
+
+pipeline : "pipeline" "(" arguments+ ")" ":" stmt+
 
 ?term : term _mult_op atom -> binop
       | atom
@@ -46,9 +49,6 @@ def parse(src):
 
 class PlaiTransformer(InlineTransformer):
 
-    def start(self, *args):
-        return [*args]
-
     def number(self, token):
         return float(token)
 
@@ -71,3 +71,7 @@ class PlaiTransformer(InlineTransformer):
 
     def var(self, token):
         return Symbol(token)
+
+    def pipeline(self, *args):
+        pipeline_args, block = args
+        return [Symbol.PIPELINE, pipeline_args, block]

@@ -72,3 +72,9 @@ class TestAssignment:
     def test_assigment_function(self):
         assert parse('bar = foo(1)') == [Symbol('='), Symbol('bar'), [Symbol('foo'), [1]]]
         assert parse('bar = foo(1, 2)') == [Symbol('='), Symbol('bar'), [Symbol('foo'), [1, 2]]]
+
+
+class TestPipeline:
+    def test_pipeline_declaration(self):
+        assert parse('pipeline(bar): foo()') == [Symbol.PIPELINE, [Symbol('bar')], [Symbol('foo')]]
+        assert parse('pipeline(bar, fuzz): foo()') == [Symbol.PIPELINE, [Symbol('bar'), Symbol('fuzz')], [Symbol('foo')]]
