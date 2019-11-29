@@ -49,6 +49,7 @@ class TestBasicExp:
 
 class TestFunctionCall:
     def test_basic_function_call(self):
+        assert parse('foo()') == [Symbol('foo')]
         assert parse('foo(1)') == [Symbol('foo'), [1]]
         assert parse('foo(1, 2)') == [Symbol('foo'), [1, 2]]
 

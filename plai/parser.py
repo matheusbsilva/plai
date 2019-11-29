@@ -63,8 +63,8 @@ class PlaiTransformer(InlineTransformer):
     def arguments(self, *args):
         return [*args]
 
-    def function_call(self, name, args):
-        return [Symbol(name), args]
+    def function_call(self, name, *args):
+        return [Symbol(name), *args]
 
     def assignment(self, name, *stmt):
         return [Symbol('='), Symbol(name), *stmt]
