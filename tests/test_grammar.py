@@ -29,3 +29,13 @@ class TestBasicExp:
 
     def test_division(self):
         assert parse('1/2') == [Symbol('/'), 1, 2]
+
+    def test_precedence_of_mult_expr(self):
+        assert parse('2 * 5 + 2') == [Symbol('+'), [Symbol('*'), 2, 5], 2]
+        assert parse('2 / 5 + 2') == [Symbol('+'), [Symbol('/'), 2, 5], 2]
+
+    def test_expression_with_parentheses(self):
+        assert parse('(2 + 4)') == [Symbol('+'), 2, 4]
+
+    def test_precedence_using_parentheses(self):
+        assert parse('(2 + 5) * 3') == [Symbol('*'), [Symbol('+'), 2, 5], 3]

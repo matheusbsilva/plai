@@ -30,6 +30,7 @@ block : stmt+
 ?atom : NUMBER -> number
       | STRING -> string
       | NAME -> var
+      | "(" expr ")"
 
 !_sum_op :  "+" | "-"
 !_mult_op : "*" | "/"
