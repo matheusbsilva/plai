@@ -79,6 +79,10 @@ class TestFunctionCall:
     def test_function_call_variable_as_argument(self):
         assert parse('foo(bar)') == [Symbol('foo'), [Symbol('bar')]]
 
+    def test_function_call_sugar_column_as_argument(self):
+        assert parse('foo(.col)') == [Symbol('foo'), [[
+            Symbol.COLUMN, Symbol('col')]]]
+
 
 class TestAssignment:
     def test_assignment_number(self):

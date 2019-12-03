@@ -8,11 +8,13 @@ grammar = r"""
 
 ?stmt : expr
       | assignment
+      | pipeline
       | s_column
 
 assignment : NAME "=" stmt
 
 arguments : expr("," expr)*
+          | s_column("," arguments)*
 
 pipeline : "pipeline" "(" arguments+ ")" ":" stmt+
 
