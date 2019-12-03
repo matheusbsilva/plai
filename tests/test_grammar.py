@@ -83,6 +83,21 @@ class TestFunctionCall:
         assert parse('foo(.col)') == [Symbol('foo'), [[
             Symbol.COLUMN, Symbol('col')]]]
 
+    def test_funcion_call_attr_call_as_argument(self):
+        assert parse('foo(bar.fuzz)') == [Symbol('foo'), [[
+            Symbol.ATTR, Symbol('bar'), Symbol('fuzz')]]]
+
+    def test_function_call_function_as_argument(self):
+        assert parse('foo(bar())') == [Symbol('foo'), [[Symbol('bar')]]]
+
+    def test_function_call_mixed_arguments(self):
+        assert parse('foo(1, 1+2, x, .col, fuzz.buzz, p())') == [
+                Symbol('foo'), [1, [Symbol('+'), 1, 2], Symbol('x'), [
+                    Symbol.COLUMN, Symbol('col')], [
+                        Symbol.ATTR, Symbol('fuzz'), Symbol('buzz')], [
+                            Symbol('p')]]
+                ]
+
 
 class TestAssignment:
     def test_assignment_number(self):
