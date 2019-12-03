@@ -51,6 +51,22 @@ class TestBasicExp:
                                                         Symbol('foo'),
                                                         Symbol('bar')], 2]
 
+    def test_sum_using_functions(self):
+        assert parse('foo() + bar() + 1') == [Symbol('+'), [
+            Symbol('+'), [Symbol('foo')], [Symbol('bar')]], 1]
+
+    def test_precedence_using_functions(self):
+        assert parse('(foo() + bar()) * 2') == [Symbol('*'), [
+            Symbol('+'), [Symbol('foo')], [Symbol('bar')]], 2]
+
+    def test_sum_using_strings(self):
+        assert parse('"hello" + "world"') == [Symbol('+'), 'hello', 'world']
+
+    def test_sum_using_attr_call(self):
+        assert parse('foo.bar + fuzz.buzz') == [Symbol('+'),
+                [Symbol.ATTR, Symbol('foo'), Symbol('bar')],
+                [Symbol.ATTR, Symbol('fuzz'), Symbol('buzz')]]
+
 
 class TestFunctionCall:
     def test_basic_function_call(self):
