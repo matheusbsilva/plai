@@ -7,11 +7,9 @@ grammar = r"""
 ?start : stmt+
 
 ?stmt : expr
-      | function_call
       | assignment
       | pipeline
 
-function_call : NAME "(" arguments? ")"
 
 assignment : NAME "=" stmt
 
@@ -19,11 +17,15 @@ arguments : expr("," expr)*
 
 pipeline : "pipeline" "(" arguments+ ")" ":" stmt+
 
-?term : term _mult_op atom -> binop
-      | atom
-
 ?expr : expr _sum_op term -> binop
       | term
+
+?term : term _mult_op atom_expr -> binop
+      | atom_expr
+
+?atom_expr : atom_expr "(" arguments? ")" -> function_call
+           | atom_expr "." NAME -> attr_call
+           | atom
 
 ?atom : NUMBER -> number
       | STRING -> string
@@ -41,9 +43,13 @@ pipeline : "pipeline" "(" arguments+ ")" ":" stmt+
 """
 
 
-def parse(src):
-    plai_parser = Lark(grammar, parser='lalr', transformer=PlaiTransformer())
+def parse(src, return_tree=False):
 
+    if return_tree is True:
+        parser = Lark(grammar, parser='lalr')
+        return parser.parse(src)
+
+    plai_parser = Lark(grammar, parser='lalr', transformer=PlaiTransformer())
     return plai_parser.parse(src)
 
 
@@ -64,7 +70,10 @@ class PlaiTransformer(InlineTransformer):
         return [*args]
 
     def function_call(self, name, *args):
-        return [Symbol(name), *args]
+        return [name, *args]
+
+    def attr_call(self, obj, attr):
+        return [Symbol.ATTR, obj, Symbol(attr)]
 
     def assignment(self, name, *stmt):
         return [Symbol('='), Symbol(name), *stmt]

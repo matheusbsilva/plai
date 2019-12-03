@@ -16,3 +16,4 @@ class Symbol:
 
 
 Symbol.PIPELINE = Symbol('pipeline')
+Symbol.ATTR = Symbol('.')

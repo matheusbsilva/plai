@@ -19,6 +19,9 @@ class TestBasicTokens:
     def test_variable_call(self):
         assert parse('bar') == Symbol('bar')
 
+    def test_attribute_call(self):
+        assert parse('bar.foo') == [Symbol.ATTR, Symbol('bar'), Symbol('foo')]
+
 
 class TestBasicExp:
     def test_sum(self):
@@ -52,8 +55,6 @@ class TestBasicExp:
 class TestFunctionCall:
     def test_basic_function_call(self):
         assert parse('foo()') == [Symbol('foo')]
-        assert parse('foo(1)') == [Symbol('foo'), [1]]
-        assert parse('foo(1, 2)') == [Symbol('foo'), [1, 2]]
 
     def test_function_call_exp_as_argument(self):
         assert parse('foo(1+2, 8*5)') == [Symbol('foo'), [
