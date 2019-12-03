@@ -8,14 +8,15 @@ grammar = r"""
 
 ?stmt : expr
       | assignment
-      | pipeline
-
+      | s_column
 
 assignment : NAME "=" stmt
 
 arguments : expr("," expr)*
 
 pipeline : "pipeline" "(" arguments+ ")" ":" stmt+
+
+s_column: "." atom
 
 ?expr : expr _sum_op term -> binop
       | term
@@ -81,6 +82,12 @@ class PlaiTransformer(InlineTransformer):
     def var(self, token):
         return Symbol(token)
 
+    def s_column(self, name):
+        if not isinstance(name, Symbol):
+            name = Symbol(name)
+        return [Symbol.COLUMN, name]
+
     def pipeline(self, *args):
         pipeline_args, block = args
         return [Symbol.PIPELINE, pipeline_args, block]
+

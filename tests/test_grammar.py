@@ -109,3 +109,7 @@ class TestPipeline:
                                                        [Symbol('bar'),
                                                            Symbol('fuzz')],
                                                        [Symbol('foo')]]
+
+    def test_sugar_column_call(self):
+        assert parse('.col') == [Symbol.COLUMN, Symbol('col')]
+        assert parse('."col"') == [Symbol.COLUMN, Symbol('col')]
