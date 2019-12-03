@@ -44,7 +44,9 @@ class TestBasicExp:
         assert parse('(2 + 5) * 3') == [Symbol('*'), [Symbol('+'), 2, 5], 3]
 
     def test_expression_with_variables(self):
-        assert parse('foo + bar + 2') == [Symbol('+'), [Symbol('+'), Symbol('foo'), Symbol('bar')], 2]
+        assert parse('foo + bar + 2') == [Symbol('+'), [Symbol('+'),
+                                                        Symbol('foo'),
+                                                        Symbol('bar')], 2]
 
 
 class TestFunctionCall:
@@ -54,7 +56,8 @@ class TestFunctionCall:
         assert parse('foo(1, 2)') == [Symbol('foo'), [1, 2]]
 
     def test_function_call_exp_as_argument(self):
-        assert parse('foo(1+2, 8*5)') == [Symbol('foo'), [[Symbol('+'), 1, 2], [Symbol('*'), 8, 5]]]
+        assert parse('foo(1+2, 8*5)') == [Symbol('foo'), [
+            [Symbol('+'), 1, 2], [Symbol('*'), 8, 5]]]
 
     def test_function_call_variable_as_argument(self):
         assert parse('foo(bar)') == [Symbol('foo'), [Symbol('bar')]]
@@ -65,16 +68,27 @@ class TestAssignment:
         assert parse('foo = 1') == [Symbol('='), Symbol('foo'), 1]
 
     def test_assignment_expr(self):
-        assert parse('bar = 1 + 2') == [Symbol('='), Symbol('bar'), [Symbol('+'), 1, 2]]
-        assert parse('bar = 1 * 2') == [Symbol('='), Symbol('bar'), [Symbol('*'), 1, 2]]
-        assert parse('bar = (1 + 2) * 5') == [Symbol('='), Symbol('bar'), [Symbol('*'), [Symbol('+'), 1, 2], 5]]
+        assert parse('bar = 1 + 2') == [Symbol('='), Symbol('bar'),
+                                        [Symbol('+'), 1, 2]]
+        assert parse('bar = 1 * 2') == [Symbol('='), Symbol('bar'),
+                                        [Symbol('*'), 1, 2]]
+        assert parse('bar = (1 + 2) * 5') == [Symbol('='), Symbol('bar'),
+                                              [Symbol('*'),
+                                                  [Symbol('+'), 1, 2], 5]]
 
     def test_assigment_function(self):
-        assert parse('bar = foo(1)') == [Symbol('='), Symbol('bar'), [Symbol('foo'), [1]]]
-        assert parse('bar = foo(1, 2)') == [Symbol('='), Symbol('bar'), [Symbol('foo'), [1, 2]]]
+        assert parse('bar = foo(1)') == [Symbol('='), Symbol('bar'),
+                                         [Symbol('foo'), [1]]]
+        assert parse('bar = foo(1, 2)') == [Symbol('='), Symbol('bar'),
+                                            [Symbol('foo'), [1, 2]]]
 
 
 class TestPipeline:
     def test_pipeline_declaration(self):
-        assert parse('pipeline(bar): foo()') == [Symbol.PIPELINE, [Symbol('bar')], [Symbol('foo')]]
-        assert parse('pipeline(bar, fuzz): foo()') == [Symbol.PIPELINE, [Symbol('bar'), Symbol('fuzz')], [Symbol('foo')]]
+        assert parse('pipeline(bar): foo()') == [Symbol.PIPELINE,
+                                                 [Symbol('bar')],
+                                                 [Symbol('foo')]]
+        assert parse('pipeline(bar, fuzz): foo()') == [Symbol.PIPELINE,
+                                                       [Symbol('bar'),
+                                                           Symbol('fuzz')],
+                                                       [Symbol('foo')]]
