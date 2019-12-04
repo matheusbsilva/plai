@@ -132,3 +132,8 @@ class TestPipeline:
     def test_sugar_column_call(self):
         assert parse('.col') == [Symbol.COLUMN, Symbol('col')]
         assert parse('."col"') == [Symbol.COLUMN, Symbol('col')]
+
+    def test_multiple_stmts_on_pipeline(self):
+        assert parse('pipeline(bar): foo(.bar) fuzz(.bar)') == [Symbol.PIPELINE, [Symbol('bar')], [
+            [Symbol('foo'), [[Symbol.COLUMN, Symbol('bar')]]], [Symbol('fuzz'), [[Symbol.COLUMN, Symbol('bar')]]]
+            ]]

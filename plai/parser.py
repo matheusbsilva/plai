@@ -87,6 +87,6 @@ class PlaiTransformer(InlineTransformer):
         return [Symbol.COLUMN, name]
 
     def pipeline(self, *args):
-        pipeline_args, block = args
+        pipeline_args, *block = args
         return [Symbol.PIPELINE, pipeline_args, block]
 
