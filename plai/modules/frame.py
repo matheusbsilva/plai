@@ -15,3 +15,12 @@ def drop(dataframe, columns=None):
     cols = [col.name for col in columns]
 
     return dataframe.drop(columns=cols)
+
+
+def read_file(path, **kwargs):
+    sep = ','
+
+    if 'sep' in kwargs:
+        sep = kwargs['sep']
+
+    return pd.read_csv(path, sep=sep)
