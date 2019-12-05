@@ -81,7 +81,7 @@ class TestFunctionCall:
 
     def test_function_call_sugar_column_as_argument(self):
         assert parse('foo(.col)') == [Symbol('foo'), [[
-            Symbol.COLUMN, Symbol('col')]]]
+            Symbol.COLUMN, 'col']]]
 
     def test_funcion_call_attr_call_as_argument(self):
         assert parse('foo(bar.fuzz)') == [Symbol('foo'), [[
@@ -93,7 +93,7 @@ class TestFunctionCall:
     def test_function_call_mixed_arguments(self):
         assert parse('foo(1, 1+2, x, .col, fuzz.buzz, p())') == [
                 Symbol('foo'), [1, [Symbol('+'), 1, 2], Symbol('x'), [
-                    Symbol.COLUMN, Symbol('col')], [
+                    Symbol.COLUMN, 'col'], [
                         Symbol.ATTR, Symbol('fuzz'), Symbol('buzz')], [
                             Symbol('p')]]
                 ]
@@ -123,17 +123,17 @@ class TestPipeline:
     def test_pipeline_declaration(self):
         assert parse('pipeline(bar): foo()') == [Symbol.PIPELINE,
                                                  [Symbol('bar')],
-                                                 [Symbol('foo')]]
+                                                 [[Symbol('foo')]]]
         assert parse('pipeline(bar, fuzz): foo()') == [Symbol.PIPELINE,
                                                        [Symbol('bar'),
                                                            Symbol('fuzz')],
-                                                       [Symbol('foo')]]
+                                                       [[Symbol('foo')]]]
 
     def test_sugar_column_call(self):
-        assert parse('.col') == [Symbol.COLUMN, Symbol('col')]
-        assert parse('."col"') == [Symbol.COLUMN, Symbol('col')]
+        assert parse('.col') == [Symbol.COLUMN, 'col']
+        assert parse('."col"') == [Symbol.COLUMN, 'col']
 
     def test_multiple_stmts_on_pipeline(self):
         assert parse('pipeline(bar): foo(.bar) fuzz(.bar)') == [Symbol.PIPELINE, [Symbol('bar')], [
-            [Symbol('foo'), [[Symbol.COLUMN, Symbol('bar')]]], [Symbol('fuzz'), [[Symbol.COLUMN, Symbol('bar')]]]
+            [Symbol('foo'), [[Symbol.COLUMN, 'bar']]], [Symbol('fuzz'), [[Symbol.COLUMN, 'bar']]]
             ]]

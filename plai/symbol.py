@@ -14,6 +14,9 @@ class Symbol:
     def __repr__(self):
         return self._data
 
+    def __str__(self):
+        return self._data
+
 
 Symbol.PIPELINE = Symbol('pipeline')
 Symbol.ATTR = Symbol('.')

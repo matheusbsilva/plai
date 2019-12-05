@@ -82,11 +82,8 @@ class PlaiTransformer(InlineTransformer):
         return Symbol(token)
 
     def sugar_column(self, name):
-        if not isinstance(name, Symbol):
-            name = Symbol(name)
-        return [Symbol.COLUMN, name]
+        return [Symbol.COLUMN, str(name)]
 
     def pipeline(self, *args):
         pipeline_args, *block = args
         return [Symbol.PIPELINE, pipeline_args, block]
-
