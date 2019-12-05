@@ -5,6 +5,7 @@ import pytest
 from plai.modules import Col
 from plai.modules import drop
 from plai.modules import read_file
+from plai.modules import dropna
 
 
 class TestCol:
@@ -48,4 +49,9 @@ class TestDataFrameBuiltinFunctions:
         path = str(csv_file_semicolon)
 
         assert isinstance(read_file(path), pd.DataFrame)
-        assert read_file(path, sep=';').equals(pd.read_csv(path, sep=';'))
+    
+    def test_dropna(self, dataframe):
+        c = Col(None)
+        dataframe['x'] = [1, np.NaN]
+        
+        assert dropna(dataframe).equals(dataframe.dropna())

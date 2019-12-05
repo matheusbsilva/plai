@@ -34,4 +34,16 @@ def export_csv(dataframe, export_path):
 
     return path
 
+def dropna(dataframe, columns=None):
+    if not isinstance(dataframe, pd.DataFrame):
+        raise TypeError('dataframe must be instance of DataFrame')
+
+    if not isinstance(columns, list) and columns is not None:
+        columns = [columns]
+        
+        if not all(isinstance(col, Col) for col in columns):
+            raise TypeError('column must be instance of Col')
+        columns = [col.name for col in columns]
+      
+    return dataframe.dropna(subset = columns)
 
