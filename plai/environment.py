@@ -1,6 +1,7 @@
 import operator as op
 
 from .symbol import Symbol
+from .modules import drop
 
 
 def env(variables=None):
@@ -20,7 +21,8 @@ def _make_global_env():
         '+': op.add,
         '-': op.sub,
         '*': op.mul,
-        '/': op.truediv
+        '/': op.truediv,
+        'drop': drop
     }
 
     global_ops = {Symbol(k): v for k, v in dic.items()}

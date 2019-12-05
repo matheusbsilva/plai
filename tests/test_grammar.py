@@ -101,21 +101,21 @@ class TestFunctionCall:
 
 class TestAssignment:
     def test_assignment_number(self):
-        assert parse('foo = 1') == [Symbol('='), Symbol('foo'), 1]
+        assert parse('foo = 1') == [Symbol.ASSIGNMENT, Symbol('foo'), 1]
 
     def test_assignment_expr(self):
-        assert parse('bar = 1 + 2') == [Symbol('='), Symbol('bar'),
+        assert parse('bar = 1 + 2') == [Symbol.ASSIGNMENT, Symbol('bar'),
                                         [Symbol('+'), 1, 2]]
-        assert parse('bar = 1 * 2') == [Symbol('='), Symbol('bar'),
+        assert parse('bar = 1 * 2') == [Symbol.ASSIGNMENT, Symbol('bar'),
                                         [Symbol('*'), 1, 2]]
-        assert parse('bar = (1 + 2) * 5') == [Symbol('='), Symbol('bar'),
+        assert parse('bar = (1 + 2) * 5') == [Symbol.ASSIGNMENT, Symbol('bar'),
                                               [Symbol('*'),
                                                   [Symbol('+'), 1, 2], 5]]
 
     def test_assigment_function(self):
-        assert parse('bar = foo(1)') == [Symbol('='), Symbol('bar'),
+        assert parse('bar = foo(1)') == [Symbol.ASSIGNMENT, Symbol('bar'),
                                          [Symbol('foo'), [1]]]
-        assert parse('bar = foo(1, 2)') == [Symbol('='), Symbol('bar'),
+        assert parse('bar = foo(1, 2)') == [Symbol.ASSIGNMENT, Symbol('bar'),
                                             [Symbol('foo'), [1, 2]]]
 
 

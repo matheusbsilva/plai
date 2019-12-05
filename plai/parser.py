@@ -76,7 +76,7 @@ class PlaiTransformer(InlineTransformer):
         return [Symbol.ATTR, obj, Symbol(attr)]
 
     def assignment(self, name, *stmt):
-        return [Symbol('='), Symbol(name), *stmt]
+        return [Symbol.ASSIGNMENT, Symbol(name), *stmt]
 
     def var(self, token):
         return Symbol(token)
