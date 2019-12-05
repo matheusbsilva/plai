@@ -14,7 +14,7 @@ class TestAssigment:
         run('x = 1', e)
         assert e[Symbol('x')] == 1
 
-    def test_assing_varible_using_expr(self):
+    def test_assing_variable_using_expr(self):
         e = env()
         run('x = 1 + 2 + 3', e)
         assert e[Symbol('x')] == 6
