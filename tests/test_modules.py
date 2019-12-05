@@ -46,7 +46,3 @@ class TestDataFrameBuiltinFunctions:
     def test_drop_function_passing_wrong_type_of_columns(self, dataframe):
         with pytest.raises(TypeError):
             drop(dataframe, 'name')
-
-    def test_drop_function_passing_empty_columns(self, dataframe):
-        with pytest.raises(ValueError):
-            drop(dataframe)
