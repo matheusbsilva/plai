@@ -22,15 +22,22 @@ pipeline : "pipeline" "(" arguments+ ")" ":" stmt+
 ?term : term _mult_op atom_expr -> binop
       | atom_expr
 
+sugar_column : "." var
+             | "." string
+
 ?atom_expr : atom_expr "(" arguments? ")" -> function_call
            | atom_expr "." NAME -> attr_call
-           | "." atom -> sugar_column
+           | sugar_column
            | atom
 
 ?atom : NUMBER -> number
-      | STRING -> string
-      | NAME -> var
+      | string
+      | var
       | "(" expr ")"
+
+var : NAME
+
+string : STRING
 
 !_sum_op :  "+" | "-"
 !_mult_op : "*" | "/"
@@ -69,7 +76,7 @@ class PlaiTransformer(InlineTransformer):
     def arguments(self, *args):
         return [*args]
 
-    def function_call(self, name, *args):
+    def function_call(self, name, args=[]):
         return [name, *args]
 
     def attr_call(self, obj, attr):
@@ -82,8 +89,10 @@ class PlaiTransformer(InlineTransformer):
         return Symbol(token)
 
     def sugar_column(self, name):
+        print(name, type(name))
+        print('str', str(name))
         return [Symbol.COLUMN, str(name)]
 
     def pipeline(self, *args):
         pipeline_args, *block = args
-        return [Symbol.PIPELINE, pipeline_args, block]
+        return [Symbol.PIPELINE, pipeline_args, *block]

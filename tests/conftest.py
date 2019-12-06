@@ -33,5 +33,3 @@ def csv_file_comma(tmpdir_factory):
 @pytest.fixture(scope='session')
 def csv_file_semicolon(tmpdir_factory):
     return create_csv_file(tmpdir_factory, sep=';')
-
-

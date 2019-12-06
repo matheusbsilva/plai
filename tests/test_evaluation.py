@@ -47,12 +47,29 @@ class TestExpressions:
 
 
 class TestPipeline:
-    def test_pipeline_returns_dataframe(self):
-        assert isinstance(run('pipeline(df): drop(.name)'), pd.DataFrame)
-
     def test_pipeline_raise_error_on_undeclared_dataframe(self):
         with pytest.raises(NameError):
             run('pipeline(df): drop(.name)')
 
     def test_pipeline_execute_stmts(self, dataframe):
-        assert run('pipeline(df): drop(.name)').equals(drop(dataframe, Col('name')))
+        e = env()
+        e[Symbol('df')] = dataframe
+
+        assert run('pipeline(df): drop(.name)', env=e).equals(
+                drop(dataframe, Col('name')))
+
+    def test_pipeline_execute_multiple_stmts(self, dataframe):
+        e = env()
+        e[Symbol('df')] = dataframe
+
+        assert run('pipeline(df): drop(.name) drop(.floats)', env=e).equals(
+                drop(dataframe, [Col('name'), Col('floats')]))
+
+
+class TestColEvaluation:
+    def test_sugar_col_returns_Col_instance(self):
+        assert isinstance(run('.col'), Col)
+
+    def test_sugar_col_returns_Col_with_right_name(self):
+        col = run('.col')
+        assert col.name == 'col'

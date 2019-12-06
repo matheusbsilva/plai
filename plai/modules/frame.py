@@ -34,6 +34,7 @@ def export_csv(dataframe, export_path):
 
     return path
 
+
 def dropna(dataframe, columns=None):
     if not isinstance(dataframe, pd.DataFrame):
         raise TypeError('dataframe must be instance of DataFrame')

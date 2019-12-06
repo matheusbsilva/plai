@@ -1,8 +1,6 @@
-import operator as op
-import pandas as pd
-
 from .parser import parse
 from .symbol import Symbol
+from .modules import Col
 from .environment import env
 
 
@@ -11,7 +9,11 @@ def eval(sexpr, e=None):
         e = env()
 
     if isinstance(sexpr, Symbol):
-        return e[sexpr]
+        try:
+            value = e[sexpr]
+        except KeyError:
+            raise NameError('name %s is undefined' % sexpr)
+        return value
 
     elif isinstance(sexpr, (int, float, str)):
         return sexpr
@@ -22,10 +24,18 @@ def eval(sexpr, e=None):
         var, exp = args
         e[var] = eval(exp, e)
 
-    elif head == Symbol.PIPELINE:
-        pipeline_args, block = args
+    elif head == Symbol.COLUMN:
+        return Col(args[0])
 
-        return pd.DataFrame()
+    elif head == Symbol.PIPELINE:
+        pipeline_args, *block = args
+
+        for stmt in block:
+            # Adding dataframe as argument
+            stmt.insert(1, pipeline_args[0])
+            e[pipeline_args[0]] = eval(stmt, e)
+
+        return e[pipeline_args[0]]
 
     else:
         proc = eval(head, e)
@@ -35,4 +45,4 @@ def eval(sexpr, e=None):
 
 
 def run(src, env=None):
-    return eval(parse(src), env)
+    return eval(parse(src), e=env)
