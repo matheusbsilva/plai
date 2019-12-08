@@ -1,7 +1,7 @@
 import operator as op
 
 from .symbol import Symbol
-from .modules import drop
+from .modules import frame
 
 
 def env(variables=None):
@@ -22,7 +22,10 @@ def _make_global_env():
         '-': op.sub,
         '*': op.mul,
         '/': op.truediv,
-        'drop': drop
+        'drop': frame.drop,
+        'dropna': frame.dropna,
+        'read_file': frame.read_file,
+        'export_csv': frame.export_csv,
     }
 
     global_ops = {Symbol(k): v for k, v in dic.items()}

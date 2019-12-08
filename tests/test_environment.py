@@ -21,3 +21,11 @@ class TestEnvironment:
     def test_basic_operators_exists_in_default_env(self):
         assert env() == global_env
         assert set(env({Symbol('x'): 3})).issuperset(global_env)
+
+    def test_builtin_functions_exist_in_default_env(self):
+        e = env()
+
+        assert Symbol('drop') in e
+        assert Symbol('dropna') in e
+        assert Symbol('read_file') in e
+        assert Symbol('export_csv') in e

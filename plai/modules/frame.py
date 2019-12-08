@@ -41,10 +41,9 @@ def dropna(dataframe, columns=None):
 
     if not isinstance(columns, list) and columns is not None:
         columns = [columns]
-        
+
         if not all(isinstance(col, Col) for col in columns):
             raise TypeError('column must be instance of Col')
         columns = [col.name for col in columns]
-      
-    return dataframe.dropna(subset = columns)
 
+    return dataframe.dropna(subset=columns)

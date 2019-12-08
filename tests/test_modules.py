@@ -49,9 +49,8 @@ class TestDataFrameBuiltinFunctions:
         path = str(csv_file_semicolon)
 
         assert isinstance(read_file(path), pd.DataFrame)
-    
+
     def test_dropna(self, dataframe):
-        c = Col(None)
         dataframe['x'] = [1, np.NaN]
-        
+
         assert dropna(dataframe).equals(dataframe.dropna())
