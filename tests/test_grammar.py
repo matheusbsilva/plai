@@ -79,6 +79,9 @@ class TestFunctionCall:
         assert parse('foo(1+2, 8*5)') == [Symbol('foo'),
             [Symbol('+'), 1, 2], [Symbol('*'), 8, 5]]
 
+    def test_function_call_passing_string_as_argument(self):
+        assert parse('foo("bar")') == [Symbol('foo'), 'bar']
+
     def test_function_call_variable_as_argument(self):
         assert parse('foo(bar)') == [Symbol('foo'), Symbol('bar')]
 

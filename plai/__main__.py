@@ -1,7 +1,9 @@
 import signal
 import sys
 
-from .parser import parse
+from .environment import env
+from .interpreter import run
+
 
 def signal_handler(sig, frame):
     print('Exiting..')
@@ -14,10 +16,12 @@ def main():
 
     while True:
         src = input('plai >>> ')
-        ast = parse(src)
+
+        e = env()
+        res = run(src, e)
 
         # print AST for debugging
-        print(ast.pretty())
+        print(res)
 
 
 if __name__ == '__main__':
