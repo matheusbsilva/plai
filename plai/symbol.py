@@ -19,6 +19,7 @@ class Symbol:
 
 
 Symbol.PIPELINE = Symbol('pipeline')
+Symbol.BEGIN = Symbol('begin')
 Symbol.ATTR = Symbol('.')
 Symbol.COLUMN = Symbol('.column')
 Symbol.ASSIGNMENT = Symbol('=')

@@ -4,6 +4,7 @@ import pytest
 from plai.interpreter import run
 from plai.modules import Col
 from plai.modules import drop
+from plai.modules import read_file
 from plai.environment import env
 from plai.symbol import Symbol
 
@@ -49,20 +50,20 @@ class TestExpressions:
 class TestPipeline:
     def test_pipeline_raise_error_on_undeclared_dataframe(self):
         with pytest.raises(NameError):
-            run('pipeline(df): drop(.name)')
+            run('pipeline(df): {drop(.name)}')
 
     def test_pipeline_execute_stmts(self, dataframe):
         e = env()
         e[Symbol('df')] = dataframe
 
-        assert run('pipeline(df): drop(.name)', env=e).equals(
+        assert run('pipeline(df): {drop(.name)}', env=e).equals(
                 drop(dataframe, Col('name')))
 
     def test_pipeline_execute_multiple_stmts(self, dataframe):
         e = env()
         e[Symbol('df')] = dataframe
 
-        assert run('pipeline(df): drop(.name) drop(.floats)', env=e).equals(
+        assert run('pipeline(df): {drop(.name) drop(.floats)}', env=e).equals(
                 drop(dataframe, [Col('name'), Col('floats')]))
 
 
@@ -73,3 +74,19 @@ class TestColEvaluation:
     def test_sugar_col_returns_Col_with_right_name(self):
         col = run('.col')
         assert col.name == 'col'
+
+
+class TestMultipleStmts:
+    def test_multiple_stmts_with_pipeline(self, dataframe, csv_file_comma):
+        path = str(csv_file_comma)
+
+        src = """
+        df = read_file("%s")
+        pipeline(df): {
+        drop(.name)}
+        """ % path
+
+        df_res = read_file(path)
+        result = drop(df_res, Col('name'))
+
+        assert run(src).equals(result)

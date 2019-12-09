@@ -14,7 +14,7 @@ assignment : NAME "=" stmt
 
 arguments : expr("," expr)*
 
-pipeline : "pipeline" "(" arguments+ ")" ":" stmt+
+pipeline : "pipeline" "(" arguments+ ")" ":" "{" stmt+ "}"
 
 ?expr : expr _sum_op term -> binop
       | term
@@ -62,6 +62,9 @@ def parse(src, return_tree=False):
 
 class PlaiTransformer(InlineTransformer):
 
+    def start(self, *args):
+        return [Symbol.BEGIN, *args]
+
     def number(self, token):
         return float(token)
 
@@ -89,8 +92,6 @@ class PlaiTransformer(InlineTransformer):
         return Symbol(token)
 
     def sugar_column(self, name):
-        print(name, type(name))
-        print('str', str(name))
         return [Symbol.COLUMN, str(name)]
 
     def pipeline(self, *args):
