@@ -3,7 +3,7 @@
 Plai is a programming language to create machine learning pipelines 
 with focus on data treatment, validation, and generation of integration tests to ensure more confiability to machine learning systems on production.
 
-# Examples 
+## Examples 
 
 ```
 # This is a commnt
@@ -73,5 +73,33 @@ pipeline main(df: T, df2):
 
     # Calling another pipeline
     alt
+```
 
+## Development 
+
+1. Install the dependencies by running the command on the root folder of the project:
+```
+pip install -r requirements.txt
+```
+
+2. To run all the tests execute:
+```
+pytest tests
+```
+
+To run a specific test execute:
+```
+# For a specific test file
+pytest tests/test_grammar.py
+
+# For a specific test class
+pytest tests/test_grammar.py::TestBasicTokens
+
+# For a specific tests method
+pytest tests/test_grammar.py::TestBasicTokens::test_token_number
+```
+
+3. To run the interactive terminal execute on the root folder:
+```
+python -m plai
 ```
