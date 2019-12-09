@@ -90,3 +90,11 @@ class TestMultipleStmts:
         result = drop(df_res, Col('name'))
 
         assert run(src).equals(result)
+
+
+class TestAttrCall:
+    def test_attr_call_on_var(self, dataframe):
+        e = env()
+        e[Symbol('df')] = dataframe
+
+        assert run('df.columns').equals(dataframe.columns)
