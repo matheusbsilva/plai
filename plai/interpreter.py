@@ -27,6 +27,10 @@ def eval(sexpr, e=None):
     elif head == Symbol.COLUMN:
         return Col(args[0])
 
+    elif head == Symbol.ATTR:
+        var, call = args
+        return getattr(e[var], str(call))
+
     elif head == Symbol.PIPELINE:
         pipeline_args, *block = args
 
