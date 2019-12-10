@@ -26,7 +26,18 @@ def _make_global_env():
         'dropna': frame.dropna,
         'read_file': frame.read_file,
         'export_csv': frame.export_csv,
-        'begin': lambda *x: x[-1]
+        'begin': lambda *x: x[-1],
+        'print': print,
+        'max': max,
+        'min': min,
+        'abs': abs,
+        'round': round,
+        'len': len,
+        '>': op.gt,
+        '<': op.lt,
+        '>=': op.ge,
+        '<=': op.le,
+        '==': op.eq
     }
 
     global_ops = {Symbol(k): v for k, v in dic.items()}
