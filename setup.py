@@ -1,10 +1,14 @@
 import setuptools
 import codecs
+import re
+
+__version__ = re.findall('__version__ = "(.*)"',
+                         open('plai/__init__.py').read())
 
 
 setuptools.setup(
     name='plAI',
-    version='0.0.0',
+    version=__version__,
     description='Programming language to create machine learning pipelines.',
     url='https://github.com/matheusbsilva/plai',
     long_description=codecs.open('README.md', 'rb', 'utf8').read(),
@@ -18,7 +22,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     python_requires='>=3.6',
     install_requires=[
-        "lark-parser == 0.7.8",
-        "pandas == 0.25.3"
-        ]
+        "lark-parser >= 0.7.8",
+        "pandas >= 0.25.3"
+    ]
 )
