@@ -7,10 +7,18 @@ from plai.parser import AST
 
 class TestAST:
     def test_initialization(self):
-        ast = AST(Token('TOKEN', 'token'))
+        ast = AST(Token('TOKEN', 'token'), [])
 
         assert ast.token == 'token'
         assert ast.children == []
+
+    def test_initialization_with_children(self):
+        child = AST(Token('CHILD', 'child'))
+        ast = AST(Token('TOKEN', 'token'), [child])
+
+        assert ast.token == 'token'
+        assert ast.children == [child]
+
 
     def test_add_child_method(self):
         ast = AST(Token('TOKEN', 'token'))

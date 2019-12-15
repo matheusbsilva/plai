@@ -4,7 +4,7 @@ from plai.symbol import Symbol
 
 
 class AST:
-    def __new__(cls, token):
+    def __new__(cls, token, children=[]):
         if isinstance(token, AST):
             new = token
         else:
@@ -14,6 +14,8 @@ class AST:
             new = super().__new__(cls)
             new.token = token
             new.children = []
+
+        [new.add_child(child) for child in children]
 
         return new
 
