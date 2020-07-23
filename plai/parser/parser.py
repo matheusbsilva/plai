@@ -2,6 +2,7 @@ from lark import Lark
 from lark import InlineTransformer
 
 from plai.symbol import Symbol
+from plai.parser.ast import AST
 
 grammar = r"""
 ?start : stmt+
@@ -22,22 +23,24 @@ pipeline : "pipeline" "(" arguments+ ")" ":" "{" stmt+ "}"
 ?term : term _mult_op atom_expr -> binop
       | atom_expr
 
-sugar_column : "." var
+sugar_column : "." name
              | "." string
 
 ?atom_expr : atom_expr "(" arguments? ")" -> function_call
-           | atom_expr "." NAME -> attr_call
+           | atom_expr ATTR_CALL name -> attr_call
            | sugar_column
            | atom
 
 ?atom : NUMBER -> number
       | string
-      | var
+      | name
       | "(" expr ")"
 
-var : NAME
+name: NAME
 
 string : STRING
+
+ATTR_CALL : "."
 
 !_sum_op :  "+" | "-"
 !_mult_op : "*" | "/"
@@ -66,12 +69,10 @@ class PlaiTransformer(InlineTransformer):
         return [Symbol.BEGIN, *args]
 
     def number(self, token):
-        return float(token)
+        return AST(token)
 
     def string(self, token):
-        return token[1:-1].replace('\\"', '"')\
-                .replace('\\n', '\n')\
-                .replace('\\t', '\t')
+        return AST(token)
 
     def binop(self, left, op, right):
         return [Symbol(op), left, right]
@@ -82,14 +83,18 @@ class PlaiTransformer(InlineTransformer):
     def function_call(self, name, args=[]):
         return [name, *args]
 
-    def attr_call(self, obj, attr):
-        return [Symbol.ATTR, obj, Symbol(attr)]
+    def attr_call(self, obj, attr_symbol, attr):
+        node = AST(attr_symbol)
+        node.add_child(obj)
+        node.add_child(attr)
+
+        return node
 
     def assignment(self, name, *stmt):
         return [Symbol.ASSIGNMENT, Symbol(name), *stmt]
 
-    def var(self, token):
-        return Symbol(token)
+    def name(self, token):
+        return AST(token)
 
     def sugar_column(self, name):
         return [Symbol.COLUMN, str(name)]

@@ -1,29 +1,35 @@
 import pytest
 
 from lark.exceptions import UnexpectedToken
+from lark import Token
 from plai.parser import parse
 from plai.symbol import Symbol
+from plai.parser.ast import AST
 
 
 class TestBasicTokens:
     def test_token_number(self):
-        assert parse('7') == 7
-        assert parse('8.1') == 8.1
+        assert parse('7') == AST(Token('NUMBER', 7))
+        assert parse('8.1') == AST(Token('NUMBER', 8.1))
 
     def test_token_string(self):
-        assert parse('"hello"') == "hello"
-        assert parse('"hello world"') == "hello world"
+        assert parse('"hello"') == AST(Token("STRING", '"hello"'))
+        assert parse('"hello world"') == AST(Token("STRING", '"hello world"'))
 
     def test_escaped_token_string(self):
-        assert parse(r'"hello \"world\""') == 'hello "world"'
-        assert parse(r'"hello \n world"') == "hello \n world"
-        assert parse(r'"hello \t world"') == "hello \t world"
+        assert parse(r'"hello \"world\""') == AST(Token("STRING", r'"hello \"world\""'))
+        assert parse(r'"hello \n world"') == AST(Token("STRING", r'"hello \n world"'))
+        assert parse(r'"hello \t world"') == AST(Token("STRING", r'"hello \t world"'))
 
     def test_variable_call(self):
-        assert parse('bar') == Symbol('bar')
+        assert parse('bar') == AST(Token("NAME", "bar"))
 
     def test_attribute_call(self):
-        assert parse('bar.foo') == [Symbol.ATTR, Symbol('bar'), Symbol('foo')]
+        attr = AST(Token('ATTR_CALL', "."))
+        attr.add_child(AST(Token('NAME', 'bar')))
+        attr.add_child(AST(Token('NAME', 'foo')))
+
+        assert parse('bar.foo') == attr
 
 
 class TestBasicExp:
