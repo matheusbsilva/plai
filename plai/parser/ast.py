@@ -1,23 +1,26 @@
 from lark import Token
 
-from plai.symbol import Symbol
-
 
 class AST:
-    def __new__(cls, token, children=[]):
-        if isinstance(token, AST):
-            new = token
+    def __init__(self, token):
+        if isinstance(token, Token):
+            self.token = token
         else:
-            if not isinstance(token, (Token, Symbol, AST)):
-                raise TypeError("'%s' must be an instance of Token or Symbol")
+            raise TypeError("'%s' must be an isntance of Token" % token)
+        self.children = []
 
-            new = super().__new__(cls)
-            new.token = token
-            new.children = []
+    def __str__(self):
+        return str(self.token)
 
-        [new.add_child(child) for child in children]
+    def __eq__(self, other):
+        if self.__class__ == other.__class__:
+            if self.token == other.token and \
+                    self.children == other.children:
+                return True
 
-        return new
+            return False
+
+        return NotImplemented
 
     def add_child(self, child):
         if not isinstance(child, AST):
@@ -25,12 +28,10 @@ class AST:
 
         self.children.append(child)
 
-    def __str__(self):
-        return str(self.token)
-
     def print(self, level=0):
         rep = level*" " + self.__str__() + "\n"
         for node in self.children:
             rep += node.print(level+1)
 
         return rep
+

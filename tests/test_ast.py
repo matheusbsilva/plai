@@ -7,18 +7,11 @@ from plai.parser import AST
 
 class TestAST:
     def test_initialization(self):
-        ast = AST(Token('TOKEN', 'token'), [])
+        token = Token('TOKEN', 'token')
+        ast = AST(token)
 
-        assert ast.token == 'token'
+        assert ast.token == token
         assert ast.children == []
-
-    def test_initialization_with_children(self):
-        child = AST(Token('CHILD', 'child'))
-        ast = AST(Token('TOKEN', 'token'), [child])
-
-        assert ast.token == 'token'
-        assert ast.children == [child]
-
 
     def test_add_child_method(self):
         ast = AST(Token('TOKEN', 'token'))
@@ -37,15 +30,6 @@ class TestAST:
         with pytest.raises(TypeError):
             AST('token')
 
-    def test_initialization_with_ast(self):
-        """
-        When initialized with an AST instance it must return that instance
-        """
-
-        ast = AST(Token('X', 'x'))
-
-        assert AST(ast) == ast
-
     def test_print(self):
         root = AST(Token('ROOT', 'root'))
         child1 = AST(Token('CHILD1', 'child1'))
@@ -56,3 +40,20 @@ class TestAST:
 
         print_result = "root\n child1\n  child2\n"
         assert root.print() == print_result
+
+    def test_compare_ast_with_no_ast(self):
+        ast = AST(Token('ROOT', 'root'))
+
+        assert (ast == 'foo') is False
+
+    def test_compare_asts(self):
+        ast_r = AST(Token('ROOT', 'root'))
+        child_r = AST(Token('CHILD', 'child'))
+        ast_r.add_child(child_r)
+
+        ast_f = AST(Token('FOO', 'foo'))
+
+        assert not ast_r == ast_f
+        assert ast_r == ast_r
+
+
