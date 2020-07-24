@@ -1,5 +1,6 @@
 from lark import Lark
 from lark import InlineTransformer
+from lark import Token
 
 from plai.symbol import Symbol
 from plai.parser.ast import AST
@@ -75,13 +76,18 @@ class PlaiTransformer(InlineTransformer):
         return AST(token)
 
     def binop(self, left, op, right):
-        return [Symbol(op), left, right]
+        op = AST(op)
+        op.add_child(left)
+        op.add_child(right)
+        return op
 
     def arguments(self, *args):
         return [*args]
 
     def function_call(self, name, args=[]):
-        return [name, *args]
+        node = name
+        [node.add_child(arg) for arg in args]
+        return node
 
     def attr_call(self, obj, attr_symbol, attr):
         node = AST(attr_symbol)
@@ -97,7 +103,8 @@ class PlaiTransformer(InlineTransformer):
         return AST(token)
 
     def sugar_column(self, name):
-        return [Symbol.COLUMN, str(name)]
+        # TODO: Reimplement this
+        raise NotImplementedError
 
     def pipeline(self, *args):
         pipeline_args, *block = args

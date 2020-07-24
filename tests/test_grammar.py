@@ -7,107 +7,172 @@ from plai.symbol import Symbol
 from plai.parser.ast import AST
 
 
+def number_node(value):
+    return AST(Token('NUMBER', value))
+
+
+def string_node(value):
+    return AST(Token('STRING', value))
+
+
+def name_node(value):
+    return AST(Token('NAME', value))
+
+
+def attr_call_node(value_obj, value_attr):
+    node = AST(Token('ATTR_CALL', '.'))
+    node.add_child(name_node(value_obj))
+    node.add_child(name_node(value_attr))
+
+    return node
+
+
+def sugar_col_node(value):
+    return AST(Token('COLUMN', value))
+
+
+def op_node(op):
+    ops_symbol = {
+        '+': 'PLUS',
+        '-': 'MINUS',
+        '*': 'STAR',
+        '/': 'SLASH'
+    }
+
+    return AST(Token(ops_symbol[op], op))
+
+
+def binop_node(op, left, right):
+    node = op_node(op)
+    node.add_child(number_node(left))
+    node.add_child(number_node(right))
+
+    return node
+
+
 class TestBasicTokens:
     def test_token_number(self):
-        assert parse('7') == AST(Token('NUMBER', 7))
-        assert parse('8.1') == AST(Token('NUMBER', 8.1))
+        assert parse('7') == number_node(7)
+        assert parse('8.1') == number_node(8.1)
 
     def test_token_string(self):
-        assert parse('"hello"') == AST(Token("STRING", '"hello"'))
-        assert parse('"hello world"') == AST(Token("STRING", '"hello world"'))
+        assert parse('"hello"') == string_node('"hello"')
+        assert parse('"hello world"') == string_node('"hello world"')
 
     def test_escaped_token_string(self):
-        assert parse(r'"hello \"world\""') == AST(Token("STRING", r'"hello \"world\""'))
-        assert parse(r'"hello \n world"') == AST(Token("STRING", r'"hello \n world"'))
-        assert parse(r'"hello \t world"') == AST(Token("STRING", r'"hello \t world"'))
+        assert parse(r'"hello \"world\""') == string_node(r'"hello \"world\""')
+        assert parse(r'"hello \n world"') == string_node(r'"hello \n world"')
+        assert parse(r'"hello \t world"') == string_node(r'"hello \t world"')
 
     def test_variable_call(self):
-        assert parse('bar') == AST(Token("NAME", "bar"))
+        assert parse('bar') == name_node("bar")
 
     def test_attribute_call(self):
-        attr = AST(Token('ATTR_CALL', "."))
-        attr.add_child(AST(Token('NAME', 'bar')))
-        attr.add_child(AST(Token('NAME', 'foo')))
-
-        assert parse('bar.foo') == attr
+        assert parse('bar.foo') == attr_call_node('foo', 'bar')
 
 
 class TestBasicExp:
     def test_sum(self):
-        assert parse('1 + 2') == [Symbol("+"), 1, 2]
+        assert parse('1 + 2') == binop_node('+', 1, 2)
 
     def test_subtraction(self):
-        assert parse('1 - 2') == [Symbol('-'), 1, 2]
+        assert parse('1 - 2') == binop_node('-', 1, 2)
 
     def test_multiplication(self):
-        assert parse('1 * 2') == [Symbol('*'), 1, 2]
+        assert parse('1 * 2') == binop_node('*', 1, 2)
 
     def test_division(self):
-        assert parse('1 / 2') == [Symbol('/'), 1, 2]
+        assert parse('1 / 2') == binop_node('/', 1, 2)
 
     def test_precedence_of_mult_expr(self):
-        assert parse('2 * 5 + 2') == [Symbol('+'), [Symbol('*'), 2, 5], 2]
-        assert parse('2 / 5 + 2') == [Symbol('+'), [Symbol('/'), 2, 5], 2]
+        root = op_node('+')
+        op = binop_node('*', 2, 5)
+        root.add_child(op)
+        root.add_child(AST(Token('NUMBER', 2)))
+
+        assert parse('2 * 5 + 2') == root
 
     def test_expression_with_parentheses(self):
-        assert parse('(2 + 4)') == [Symbol('+'), 2, 4]
+        op = binop_node('+', 2, 4)
+        assert parse('(2 + 4)') == op
 
     def test_precedence_using_parentheses(self):
-        assert parse('(2 + 5) * 3') == [Symbol('*'), [Symbol('+'), 2, 5], 3]
+        root = op_node('*')
+        root.add_child(binop_node('+', 2, 5))
+        root.add_child(number_node(3))
+        assert parse('(2 + 5) * 3') == root
 
     def test_expression_with_variables(self):
-        assert parse('foo + bar + 2') == [Symbol('+'), [Symbol('+'),
-                                                        Symbol('foo'),
-                                                        Symbol('bar')], 2]
+        root = op_node('+')
+        child = op_node('+')
+        child.add_child(name_node('foo'))
+        child.add_child(name_node('bar'))
+        root.add_child(child)
+        root.add_child(number_node(2))
+
+        assert parse('foo + bar + 2') == root
 
     def test_sum_using_functions(self):
-        assert parse('foo() + bar() + 1') == [Symbol('+'), [
-            Symbol('+'), [Symbol('foo')], [Symbol('bar')]], 1]
+        root = op_node('+')
+        func = name_node('foo')
+        root.add_child(func)
+        root.add_child(number_node(1))
 
-    def test_precedence_using_functions(self):
-        assert parse('(foo() + bar()) * 2') == [Symbol('*'), [
-            Symbol('+'), [Symbol('foo')], [Symbol('bar')]], 2]
+        assert parse('foo() + 1') == root
 
     def test_sum_using_strings(self):
-        assert parse('"hello" + "world"') == [Symbol('+'), 'hello', 'world']
+        root = op_node('+')
+        root.add_child(string_node('"hello"'))
+        root.add_child(string_node('"world"'))
+        assert parse('"hello" + "world"') == root
 
     def test_sum_using_attr_call(self):
-        assert parse('foo.bar + fuzz.buzz') == [Symbol('+'),
-                [Symbol.ATTR, Symbol('foo'), Symbol('bar')],
-                [Symbol.ATTR, Symbol('fuzz'), Symbol('buzz')]]
+        root = op_node('+')
+        root.add_child(attr_call_node('foo', 'bar'))
+        root.add_child(attr_call_node('fuzz', 'buzz'))
+
+        assert parse('foo.bar + fuzz.buzz') == root
 
 
 class TestFunctionCall:
     def test_basic_function_call(self):
-        assert parse('foo()') == [Symbol('foo')]
+        assert parse('foo()') == name_node('foo')
 
     def test_function_call_exp_as_argument(self):
-        assert parse('foo(1+2, 8*5)') == [Symbol('foo'),
-            [Symbol('+'), 1, 2], [Symbol('*'), 8, 5]]
+        root = name_node('foo')
+        root.add_child(binop_node('+', 1, 2))
+        root.add_child(binop_node('*', 8, 5))
+
+        assert parse('foo(1+2, 8*5)') == root
 
     def test_function_call_passing_string_as_argument(self):
-        assert parse('foo("bar")') == [Symbol('foo'), 'bar']
+        root = name_node('foo')
+        root.add_child(string_node('"bar"'))
+        assert parse('foo("bar")') == root
 
     def test_function_call_variable_as_argument(self):
-        assert parse('foo(bar)') == [Symbol('foo'), Symbol('bar')]
-
-    def test_function_call_sugar_column_as_argument(self):
-        assert parse('foo(.col)') == [Symbol('foo'), [
-            Symbol.COLUMN, 'col']]
+        root = name_node('foo')
+        root.add_child(name_node('bar'))
+        assert parse('foo(bar)') == root
 
     def test_funcion_call_attr_call_as_argument(self):
-        assert parse('foo(bar.fuzz)') == [Symbol('foo'), [
-            Symbol.ATTR, Symbol('bar'), Symbol('fuzz')]]
+        root = name_node('foo')
+        root.add_child(attr_call_node('bar', 'fuzz'))
+        assert parse('foo(bar.fuzz)') == root
 
     def test_function_call_function_as_argument(self):
-        assert parse('foo(bar())') == [Symbol('foo'), [Symbol('bar')]]
+        root = name_node('foo')
+        root.add_child(name_node('bar'))
+        assert parse('foo(bar())') == root
 
     def test_function_call_mixed_arguments(self):
-        assert parse('foo(1, 1+2, x, .col, fuzz.buzz, p())') == [
-                Symbol('foo'), 1, [Symbol('+'), 1, 2], Symbol('x'), [
-                    Symbol.COLUMN, 'col'], [
-                        Symbol.ATTR, Symbol('fuzz'), Symbol('buzz')], [
-                            Symbol('p')]]
+        root = name_node('foo')
+        root.add_child(number_node(1))
+        root.add_child(binop_node('+', 1, 2))
+        root.add_child(name_node('x'))
+        root.add_child(attr_call_node('fuzz', 'buzz'))
+
+        assert parse('foo(1, 1+2, x, fuzz.buzz)') == root
 
 
 class TestAssignment:

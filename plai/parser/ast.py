@@ -22,6 +22,16 @@ class AST:
 
         return NotImplemented
 
+    def __repr__(self):
+        rep = "%s" % self.token
+        if self.children:
+            rep += "["
+            for child in self.children:
+                rep += "%s " % repr(child)
+            rep += "]"
+
+        return rep
+
     def add_child(self, child):
         if not isinstance(child, AST):
             raise TypeError("'%s' must be an instance of AST" % child)
