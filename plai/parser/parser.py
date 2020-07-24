@@ -12,7 +12,7 @@ grammar = r"""
       | assignment
       | pipeline
 
-assignment : NAME "=" stmt
+assignment : name ASSIGN stmt
 
 arguments : expr("," expr)*
 
@@ -42,6 +42,7 @@ name: NAME
 string : STRING
 
 ATTR_CALL : "."
+ASSIGN : "="
 
 !_sum_op :  "+" | "-"
 !_mult_op : "*" | "/"
@@ -96,8 +97,11 @@ class PlaiTransformer(InlineTransformer):
 
         return node
 
-    def assignment(self, name, *stmt):
-        return [Symbol.ASSIGNMENT, Symbol(name), *stmt]
+    def assignment(self, name, assign_symbol, stmt):
+        node = AST(assign_symbol)
+        node.add_child(name)
+        node.add_child(stmt)
+        return node
 
     def name(self, token):
         return AST(token)

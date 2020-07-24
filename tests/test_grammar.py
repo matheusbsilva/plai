@@ -27,8 +27,8 @@ def attr_call_node(value_obj, value_attr):
     return node
 
 
-def sugar_col_node(value):
-    return AST(Token('COLUMN', value))
+def assign_node():
+    return AST(Token('ASSIGN', '='))
 
 
 def op_node(op):
@@ -177,22 +177,36 @@ class TestFunctionCall:
 
 class TestAssignment:
     def test_assignment_number(self):
-        assert parse('foo = 1') == [Symbol.ASSIGNMENT, Symbol('foo'), 1]
+        root = assign_node()
+        root.add_child(name_node('foo'))
+        root.add_child(number_node(1))
+
+        assert parse('foo = 1') == root
 
     def test_assignment_expr(self):
-        assert parse('bar = 1 + 2') == [Symbol.ASSIGNMENT, Symbol('bar'),
-                                        [Symbol('+'), 1, 2]]
-        assert parse('bar = 1 * 2') == [Symbol.ASSIGNMENT, Symbol('bar'),
-                                        [Symbol('*'), 1, 2]]
-        assert parse('bar = (1 + 2) * 5') == [Symbol.ASSIGNMENT, Symbol('bar'),
-                                              [Symbol('*'),
-                                                  [Symbol('+'), 1, 2], 5]]
+        root = assign_node()
+        root.add_child(name_node('bar'))
+        root.add_child(binop_node('+', 1, 2))
+        assert parse('bar = 1 + 2') == root
+
+    def test_assign_comp_expr(self):
+        op = op_node('*')
+        op.add_child(binop_node('+', 1, 2))
+        op.add_child(number_node(5))
+
+        root = assign_node()
+        root.add_child(name_node('bar'))
+        root.add_child(op)
+        assert parse('bar = (1 + 2) * 5') == root
 
     def test_assignment_function(self):
-        assert parse('bar = foo(1)') == [Symbol.ASSIGNMENT, Symbol('bar'),
-                                         [Symbol('foo'), 1]]
-        assert parse('bar = foo(1, 2)') == [Symbol.ASSIGNMENT, Symbol('bar'),
-                                            [Symbol('foo'), 1, 2]]
+        root = assign_node()
+        root.add_child(name_node('bar'))
+        func = name_node('foo')
+        func.add_child(number_node(1))
+        root.add_child(func)
+
+        assert parse('bar = foo(1)') == root
 
 
 class TestPipeline:
