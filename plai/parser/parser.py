@@ -111,5 +111,6 @@ class PlaiTransformer(InlineTransformer):
         raise NotImplementedError
 
     def pipeline(self, *args):
+        # TODO: Reimplement this
         pipeline_args, *block = args
         return [Symbol.PIPELINE, pipeline_args, *block]
