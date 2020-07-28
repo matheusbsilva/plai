@@ -1,6 +1,5 @@
 from lark import Lark
 from lark import InlineTransformer
-from lark import Token
 
 from plai.symbol import Symbol
 from plai.parser.ast import AST

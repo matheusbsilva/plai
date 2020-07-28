@@ -5,6 +5,7 @@ from .environment import env
 
 
 def eval(sexpr, e=None):
+    #TODO: remove deprecated evaluation
     if e is None:
         e = env()
 
