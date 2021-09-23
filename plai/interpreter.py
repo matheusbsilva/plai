@@ -1,3 +1,5 @@
+import uuid
+
 from .parser import parse
 from .symbol import Symbol
 from .modules import Col
@@ -33,13 +35,15 @@ def eval(sexpr, e=None):
 
     elif head == Symbol.PIPELINE:
         pipeline_args, *block = args
+        dataframe = pipeline_args[0]
 
         for stmt in block:
-            # Adding dataframe as argument
-            stmt.insert(1, pipeline_args[0])
-            e[pipeline_args[0]] = eval(stmt, e)
+            stmt.insert(1, dataframe)
+            result = eval(stmt, e)
+            dataframe = Symbol(f'{pipeline_args[0]}_{uuid.uuid4()}')
+            e[dataframe] = result
 
-        return e[pipeline_args[0]]
+        return e[dataframe]
 
     else:
         proc = eval(head, e)
