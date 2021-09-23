@@ -13,9 +13,11 @@ grammar = r"""
 
 assignment : NAME "=" stmt
 
-arguments : expr("," expr)*
+arguments : argvalue("," argvalue)*
 
-pipeline : "pipeline" "(" arguments+ ")" ":" _NL [_INDENT stmt+ _DEDENT]
+?argvalue : expr("=" expr)?
+
+pipeline : "pipeline" "(" arguments+ ")" ":" _NL _INDENT stmt+ _DEDENT
 
 ?expr : expr _sum_op term -> binop
       | term
@@ -93,6 +95,9 @@ class PlaiTransformer(InlineTransformer):
         return [Symbol(op), left, right]
 
     def arguments(self, *args):
+        return [*args]
+
+    def argvalue(self, *args):
         return [*args]
 
     def function_call(self, name, args=[]):

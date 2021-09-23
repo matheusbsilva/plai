@@ -78,7 +78,8 @@ class TestFunctionCall:
 
     def test_function_call_exp_as_argument(self):
         assert parse('foo(1+2, 8*5)') == [Symbol('foo'),
-            [Symbol('+'), 1, 2], [Symbol('*'), 8, 5]]
+                                          [Symbol('+'), 1, 2],
+                                          [Symbol('*'), 8, 5]]
 
     def test_function_call_passing_string_as_argument(self):
         assert parse('foo("bar")') == [Symbol('foo'), 'bar']
@@ -103,6 +104,12 @@ class TestFunctionCall:
                     Symbol.COLUMN, 'col'], [
                         Symbol.ATTR, Symbol('fuzz'), Symbol('buzz')], [
                             Symbol('p')]]
+
+    def test_function_call_named_argument(self):
+        assert parse('foo(bar=42)') == [Symbol('foo'), [Symbol('bar'), 42]]
+        assert parse('foo(bar=42, buzz=55)') == [Symbol('foo'),
+                                                 [Symbol('bar'), 42],
+                                                 [Symbol('buzz'), 55]]
 
 
 class TestAssignment:
