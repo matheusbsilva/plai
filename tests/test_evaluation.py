@@ -50,20 +50,20 @@ class TestExpressions:
 class TestPipeline:
     def test_pipeline_raise_error_on_undeclared_dataframe(self):
         with pytest.raises(NameError):
-            run('pipeline(df): {drop(.name)}')
+            run('pipeline(df): \n\tdrop(.name)')
 
     def test_pipeline_execute_stmts(self, dataframe):
         e = env()
         e[Symbol('df')] = dataframe
 
-        assert run('pipeline(df): {drop(.name)}', env=e).equals(
+        assert run('pipeline(df): \n\tdrop(.name)', env=e).equals(
                 drop(dataframe, Col('name')))
 
     def test_pipeline_execute_multiple_stmts(self, dataframe):
         e = env()
         e[Symbol('df')] = dataframe
 
-        assert run('pipeline(df): {drop(.name) drop(.floats)}', env=e).equals(
+        assert run('pipeline(df): \n\tdrop(.name) \n\tdrop(.floats)', env=e).equals(
                 drop(dataframe, [Col('name'), Col('floats')]))
 
 
@@ -82,8 +82,8 @@ class TestMultipleStmts:
 
         src = """
         df = read_file("%s")
-        pipeline(df): {
-        drop(.name)}
+        pipeline(df):
+            drop(.name)
         """ % path
 
         df_res = read_file(path)

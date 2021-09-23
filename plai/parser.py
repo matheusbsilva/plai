@@ -1,20 +1,21 @@
 from lark import Lark
 from lark import InlineTransformer
+from lark.indenter import Indenter
 
 from .symbol import Symbol
 
 grammar = r"""
-?start : stmt+
+?start : _NL* stmt+
 
-?stmt : expr
-      | assignment
-      | pipeline
+?stmt : expr _NL*
+      | assignment _NL*
+      | pipeline _NL*
 
 assignment : NAME "=" stmt
 
 arguments : expr("," expr)*
 
-pipeline : "pipeline" "(" arguments+ ")" ":" "{" stmt+ "}"
+pipeline : "pipeline" "(" arguments+ ")" ":" _NL [_INDENT stmt+ _DEDENT]
 
 ?expr : expr _sum_op term -> binop
       | term
@@ -45,9 +46,21 @@ string : STRING
 %import common.NUMBER -> NUMBER
 %import common.ESCAPED_STRING -> STRING
 %import common.CNAME -> NAME
+%import common.WS_INLINE
+%declare _INDENT _DEDENT
+%ignore WS_INLINE
 
-%ignore /\s/
+_NL: /(\r?\n[\t ]*)+/
 """
+
+
+class TreeIndenter(Indenter):
+    NL_type = '_NL'
+    OPEN_PAREN_types = []
+    CLOSE_PAREN_types = []
+    INDENT_type = '_INDENT'
+    DEDENT_type = '_DEDENT'
+    tab_len = 8
 
 
 def parse(src, return_tree=False):
@@ -56,7 +69,7 @@ def parse(src, return_tree=False):
         parser = Lark(grammar, parser='lalr')
         return parser.parse(src)
 
-    plai_parser = Lark(grammar, parser='lalr', transformer=PlaiTransformer())
+    plai_parser = Lark(grammar, parser='lalr', transformer=PlaiTransformer(), postlex=TreeIndenter())
     return plai_parser.parse(src)
 
 

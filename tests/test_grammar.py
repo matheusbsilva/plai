@@ -126,10 +126,10 @@ class TestAssignment:
 
 class TestPipeline:
     def test_pipeline_declaration(self):
-        assert parse('pipeline(bar): {foo()}') == [Symbol.PIPELINE,
+        assert parse('pipeline(bar): \n\tfoo()') == [Symbol.PIPELINE,
                                                  [Symbol('bar')],
                                                  [Symbol('foo')]]
-        assert parse('pipeline(bar, fuzz): {foo()}') == [Symbol.PIPELINE,
+        assert parse('pipeline(bar, fuzz): \n\tfoo()') == [Symbol.PIPELINE,
                                                        [Symbol('bar'),
                                                            Symbol('fuzz')],
                                                        [Symbol('foo')]]
@@ -145,5 +145,5 @@ class TestPipeline:
             parse('.()')
 
     def test_multiple_stmts_on_pipeline(self):
-        parsed = parse('pipeline(bar): {foo(.bar) fuzz(.bar)}')
+        parsed = parse('pipeline(bar): \n\tfoo(.bar) fuzz(.bar)')
         assert parsed == [Symbol.PIPELINE, [Symbol('bar')], [Symbol('foo'), [Symbol.COLUMN, 'bar']], [Symbol('fuzz'), [Symbol.COLUMN, 'bar']]]
