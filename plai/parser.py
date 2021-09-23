@@ -38,19 +38,22 @@ sugar_column : "." var
 
 var : NAME
 
-string : STRING
+string : ESCAPED_STRING
 
 !_sum_op :  "+" | "-"
 !_mult_op : "*" | "/"
 
 %import common.NUMBER -> NUMBER
-%import common.ESCAPED_STRING -> STRING
 %import common.CNAME -> NAME
 %import common.WS_INLINE
 %declare _INDENT _DEDENT
 %ignore WS_INLINE
 
 _NL: /(\r?\n[\t ]*)+/
+_STRING_INNER: /.*?/
+_STRING_ESC_INNER: _STRING_INNER /(?<!\\)(\\\\)*?/
+
+ESCAPED_STRING : ("\"" | "'") _STRING_ESC_INNER ("\"" | "'")
 """
 
 

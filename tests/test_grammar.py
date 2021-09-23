@@ -12,6 +12,7 @@ class TestBasicTokens:
 
     def test_token_string(self):
         assert parse('"hello"') == "hello"
+        assert parse("'hello'") == "hello"
         assert parse('"hello world"') == "hello world"
 
     def test_escaped_token_string(self):
