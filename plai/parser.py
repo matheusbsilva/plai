@@ -28,9 +28,12 @@ pipeline : "pipeline" "(" arguments+ ")" ":" _NL _INDENT stmt+ _DEDENT
 sugar_column : "." var
              | "." string
 
+sugar_row : "$" sugar_column
+
 ?atom_expr : atom_expr "(" arguments? ")" -> function_call
            | atom_expr "." NAME -> attr_call
            | sugar_column
+           | sugar_row
            | atom
 
 ?atom : NUMBER -> number
@@ -114,6 +117,9 @@ class PlaiTransformer(InlineTransformer):
 
     def sugar_column(self, name):
         return [Symbol.COLUMN, str(name)]
+
+    def sugar_row(self, *args):
+        return [Symbol.ROW, *args]
 
     def pipeline(self, *args):
         pipeline_args, *block = args

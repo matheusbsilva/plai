@@ -154,4 +154,10 @@ class TestPipeline:
 
     def test_multiple_stmts_on_pipeline(self):
         parsed = parse('pipeline(bar): \n\tfoo(.bar) fuzz(.bar)')
-        assert parsed == [Symbol.PIPELINE, [Symbol('bar')], [Symbol('foo'), [Symbol.COLUMN, 'bar']], [Symbol('fuzz'), [Symbol.COLUMN, 'bar']]]
+        assert parsed == [Symbol.PIPELINE, [Symbol('bar')],
+                          [Symbol('foo'), [Symbol.COLUMN, 'bar']],
+                          [Symbol('fuzz'), [Symbol.COLUMN, 'bar']]]
+
+    def test_sugar_row_by_row_operator(self):
+        assert parse('$.col') == [Symbol.ROW, [Symbol.COLUMN, 'col']]
+        assert parse('$."col"') == [Symbol.ROW, [Symbol.COLUMN, 'col']]

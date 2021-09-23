@@ -47,6 +47,36 @@ class TestExpressions:
         assert run('(6 / 2) * 6') == 18
 
 
+class TestFunctionCall:
+    def test_function_call_without_arguments(self):
+        e = env()
+
+        def foo():
+            return 42
+
+        e[Symbol('foo')] = foo
+        assert run('foo()', env=e) == 42
+
+    def test_function_call_with_arguments(self):
+        e = env()
+
+        def foo(x):
+            return x * 2
+        e[Symbol('foo')] = foo
+
+        assert run('foo(3)', env=e) == 6
+
+    def test_function_call_with_named_arguments(self):
+        e = env()
+
+        def foo(x, z=0, y=10):
+            return x * z
+
+        e[Symbol('foo')] = foo
+
+        assert run('foo(3, z=2)', env=e) == 6
+
+
 class TestPipeline:
     def test_pipeline_raise_error_on_undeclared_dataframe(self):
         with pytest.raises(NameError):
