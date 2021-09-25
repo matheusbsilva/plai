@@ -6,7 +6,7 @@ from .modules import Col
 from .environment import env
 
 
-def eval(sexpr, e=None):
+def eval(sexpr, e=None, **kwargs):
     if e is None:
         e = env()
 
@@ -20,37 +20,39 @@ def eval(sexpr, e=None):
     elif isinstance(sexpr, (int, float, str)):
         return sexpr
 
-    head, *args = sexpr
+    head, *sargs = sexpr
 
     if head == Symbol.ASSIGNMENT:
-        var, exp = args
+        var, exp = sargs
         e[var] = eval(exp, e)
 
     elif head == Symbol.COLUMN:
-        return Col(args[0])
+        if 'dataframe' not in kwargs:
+            raise NameError('Dataframe not specified for the operation')
+
+        return Col(sargs[0], e[kwargs['dataframe']])
 
     elif head == Symbol.ATTR:
-        var, call = args
+        var, call = sargs
         return getattr(e[var], str(call))
 
     elif head == Symbol.PIPELINE:
-        pipeline_args, *block = args
+        pipeline_args, *block = sargs
         dataframe = pipeline_args[0]
 
         for stmt in block:
-            stmt.insert(1, dataframe)
-            result = eval(stmt, e)
+            result = eval(stmt, e, **{'dataframe': dataframe})
             dataframe = Symbol(f'{pipeline_args[0]}_{uuid.uuid4()}')
             e[dataframe] = result
 
         return e[dataframe]
 
     else:
-        proc = eval(head, e)
-        vals = [eval(arg, e) for arg in args]
+        proc = eval(head, e, **kwargs)
+        vals = [eval(sarg, e, **kwargs) for sarg in sargs]
 
         return proc(*vals)
 
 
-def run(src, env=None):
-    return eval(parse(src), e=env)
+def run(src, env=None, **kwargs):
+    return eval(parse(src), e=env, **kwargs)
