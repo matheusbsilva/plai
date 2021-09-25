@@ -158,6 +158,5 @@ class TestPipeline:
                           [Symbol('foo'), [Symbol.COLUMN, 'bar']],
                           [Symbol('fuzz'), [Symbol.COLUMN, 'bar']]]
 
-    def test_sugar_row_by_row_operator(self):
-        assert parse('$.col') == [Symbol.ROW, [Symbol.COLUMN, 'col']]
-        assert parse('$."col"') == [Symbol.ROW, [Symbol.COLUMN, 'col']]
+    def test_suga_column_expression(self):
+        assert parse('.col + 1') == [Symbol('+'), [Symbol.COLUMN, 'col'], 1]
