@@ -87,23 +87,47 @@ class TestPipeline:
         e[Symbol('df')] = dataframe
 
         assert run('pipeline(df): \n\tdrop(.name)', env=e).equals(
-                drop(dataframe, Col('name')))
+            drop(Col('name', dataframe), **{'dataframe': dataframe}))
 
     def test_pipeline_execute_multiple_stmts(self, dataframe):
         e = env()
         e[Symbol('df')] = dataframe
 
         assert run('pipeline(df): \n\tdrop(.name) \n\tdrop(.floats)', env=e).equals(
-                drop(dataframe, [Col('name'), Col('floats')]))
+            drop(Col('name', dataframe), Col('floats', dataframe), **{'dataframe': dataframe}))
 
 
 class TestColEvaluation:
-    def test_sugar_col_returns_Col_instance(self):
-        assert isinstance(run('.col'), Col)
+    def test_sugar_col_returns_Col_instance(self, dataframe):
+        e = env()
+        df_symbol = Symbol('df')
+        e[df_symbol] = dataframe
 
-    def test_sugar_col_returns_Col_with_right_name(self):
-        col = run('.col')
+        assert isinstance(run('.col', **{'dataframe': df_symbol}), Col)
+
+    def test_sugar_col_returns_Col_with_right_name(self, dataframe):
+        e = env()
+        df_symbol = Symbol('df')
+        e[df_symbol] = dataframe
+
+        col = run('.col', **{'dataframe': df_symbol})
         assert col.name == 'col'
+
+
+class TestRowByRowOperations:
+    def test_row_operation_returns_expected_value(self, dataframe, csv_file_comma):
+        path = str(csv_file_comma)
+
+        src = """
+df = read_file("%s")
+pipeline(df):
+    .'name' + '_foo'
+""" % path
+
+        df_res = read_file(path)
+        df_res['name'] = df_res['name'] + '_foo'
+
+        assert run(src).equals(df_res)
 
 
 class TestMultipleStmts:
@@ -111,13 +135,13 @@ class TestMultipleStmts:
         path = str(csv_file_comma)
 
         src = """
-        df = read_file("%s")
-        pipeline(df):
-            drop(.name)
-        """ % path
+df = read_file("%s")
+pipeline(df):
+    drop(.name)
+""" % path
 
         df_res = read_file(path)
-        result = drop(df_res, Col('name'))
+        result = drop(Col('name', **{'dataframe': df_res}), **{'dataframe': df_res})
 
         assert run(src).equals(result)
 

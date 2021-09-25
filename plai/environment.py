@@ -16,28 +16,35 @@ def env(variables=None):
         return env
 
 
+# TODO: find a better solution
+def kwargs_decorator(func):
+    def wrapper(*args, **kwargs):
+        return func(*args)
+    return wrapper
+
+
 def _make_global_env():
     dic = {
-        '+': op.add,
-        '-': op.sub,
-        '*': op.mul,
-        '/': op.truediv,
-        'drop': frame.drop,
-        'dropna': frame.dropna,
-        'read_file': frame.read_file,
-        'export_csv': frame.export_csv,
-        'begin': lambda *x: x[-1],
+        '+': kwargs_decorator(op.add),
+        '-': kwargs_decorator(op.sub),
+        '*': kwargs_decorator(op.mul),
+        '/': kwargs_decorator(op.truediv),
+        '>': kwargs_decorator(op.gt),
+        '<': kwargs_decorator(op.lt),
+        '>=': kwargs_decorator(op.ge),
+        '<=': kwargs_decorator(op.le),
+        '==': kwargs_decorator(op.eq),
         'print': print,
         'max': max,
         'min': min,
         'abs': abs,
         'round': round,
         'len': len,
-        '>': op.gt,
-        '<': op.lt,
-        '>=': op.ge,
-        '<=': op.le,
-        '==': op.eq
+        'begin': lambda *x: x[-1],
+        'drop': frame.drop,
+        'dropna': frame.dropna,
+        'read_file': frame.read_file,
+        'export_csv': frame.export_csv
     }
 
     global_ops = {Symbol(k): v for k, v in dic.items()}

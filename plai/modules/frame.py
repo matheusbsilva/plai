@@ -3,15 +3,18 @@ import pandas as pd
 from .columns import Col
 
 
-def drop(dataframe, columns=None):
-    if not isinstance(dataframe, pd.DataFrame):
-        raise TypeError('dataframe must be instance of DataFrame')
-
-    if not isinstance(columns, list):
-        columns = [columns]
+def drop(*columns, **kwargs):
+    if 'dataframe' not in kwargs:
+        raise ValueError('Dataframe not present in the scope')
 
     if not all(isinstance(col, Col) for col in columns):
         raise TypeError('column must be instance of Col')
+
+    dataframe = kwargs['dataframe']
+
+    if not isinstance(dataframe, pd.DataFrame):
+        raise TypeError('dataframe must be instance of DataFrame')
+
     cols = [col.name for col in columns]
 
     return dataframe.drop(columns=cols)
@@ -35,15 +38,21 @@ def export_csv(dataframe, export_path):
     return path
 
 
-def dropna(dataframe, columns=None):
+def dropna(*columns, **kwargs):
+    if 'dataframe' not in kwargs:
+        raise ValueError('Dataframe not present in the scope')
+
+    dataframe = kwargs['dataframe']
+
     if not isinstance(dataframe, pd.DataFrame):
         raise TypeError('dataframe must be instance of DataFrame')
 
-    if not isinstance(columns, list) and columns is not None:
-        columns = [columns]
+    if not all(isinstance(col, Col) for col in columns):
+        raise TypeError('column must be instance of Col')
 
-        if not all(isinstance(col, Col) for col in columns):
-            raise TypeError('column must be instance of Col')
-        columns = [col.name for col in columns]
+    columns = [col.name for col in columns]
+
+    if not columns:
+        columns = None
 
     return dataframe.dropna(subset=columns)

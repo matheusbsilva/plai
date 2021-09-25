@@ -30,7 +30,7 @@ def eval(sexpr, e=None, **kwargs):
         if 'dataframe' not in kwargs:
             raise NameError('Dataframe not specified for the operation')
 
-        return Col(sargs[0], e[kwargs['dataframe']])
+        return Col(sargs[0], kwargs['dataframe'])
 
     elif head == Symbol.ATTR:
         var, call = sargs
@@ -38,20 +38,18 @@ def eval(sexpr, e=None, **kwargs):
 
     elif head == Symbol.PIPELINE:
         pipeline_args, *block = sargs
-        dataframe = pipeline_args[0]
+        dataframe = eval(*pipeline_args)
 
         for stmt in block:
-            result = eval(stmt, e, **{'dataframe': dataframe})
-            dataframe = Symbol(f'{pipeline_args[0]}_{uuid.uuid4()}')
-            e[dataframe] = result
+            dataframe = eval(stmt, e, **{'dataframe': dataframe})
 
-        return e[dataframe]
+        return dataframe
 
     else:
         proc = eval(head, e, **kwargs)
         vals = [eval(sarg, e, **kwargs) for sarg in sargs]
 
-        return proc(*vals)
+        return proc(*vals, **kwargs)
 
 
 def run(src, env=None, **kwargs):
