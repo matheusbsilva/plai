@@ -7,7 +7,7 @@ from .symbol import Symbol
 grammar = r"""
 ?start : _NL* stmt+
 
-?stmt : expr _NL*
+?stmt : expr ("as" var)* _NL* -> alias_expr
       | assignment _NL*
       | pipeline _NL*
 
@@ -105,6 +105,9 @@ class PlaiTransformer(InlineTransformer):
 
     def attr_call(self, obj, attr):
         return [Symbol.ATTR, obj, Symbol(attr)]
+
+    def alias_expr(self, *expr):
+        return [Symbol.ALIAS, *expr]
 
     def assignment(self, name, *stmt):
         return [Symbol.ASSIGNMENT, Symbol(name), *stmt]

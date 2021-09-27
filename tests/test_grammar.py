@@ -158,5 +158,8 @@ class TestPipeline:
                           [Symbol('foo'), [Symbol.COLUMN, 'bar']],
                           [Symbol('fuzz'), [Symbol.COLUMN, 'bar']]]
 
-    def test_suga_column_expression(self):
+    def test_sugar_column_expression(self):
         assert parse('.col + 1') == [Symbol('+'), [Symbol.COLUMN, 'col'], 1]
+
+    def test_as_operator(self):
+        assert parse('.col as foo') == [Symbol.ALIAS, [Symbol.COLUMN, 'col'], Symbol('foo')]
