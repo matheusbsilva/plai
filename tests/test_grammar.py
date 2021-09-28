@@ -50,6 +50,17 @@ class TestBasicExp:
     def test_precedence_using_parentheses(self):
         assert parse('(2 + 5) * 3') == [Symbol('*'), [Symbol('+'), 2, 5], 3]
 
+    def test_comparison_expression(self):
+        assert parse('1 > 2') == [Symbol('>'), 1, 2]
+        assert parse('1 < 2') == [Symbol('<'), 1, 2]
+        assert parse('1 >= 2') == [Symbol('>='), 1, 2]
+        assert parse('1 <= 2') == [Symbol('<='), 1, 2]
+        assert parse('1 == 2') == [Symbol('=='), 1, 2]
+        assert parse('1 != 2') == [Symbol('!='), 1, 2]
+
+    def test_compose_comparison_expression(self):
+        assert parse('1 > 2 + 1') == [Symbol('>'), 1, [Symbol('+'), 2, 1]]
+
     def test_expression_with_variables(self):
         assert parse('foo + bar + 2') == [Symbol('+'), [Symbol('+'),
                                                         Symbol('foo'),

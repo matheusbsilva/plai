@@ -22,7 +22,10 @@ pipeline : "pipeline" "(" arguments+ ")" ":" _NL _INDENT stmt+ _DEDENT
 
 alias_expr : expr ("as" var)
 
-?expr : expr _sum_op term -> binop
+?expr : arith_expr _comp_op expr -> binop
+      | arith_expr
+
+?arith_expr : arith_expr _sum_op term -> binop
       | term
 
 ?term : term _mult_op atom_expr -> binop
@@ -47,6 +50,7 @@ string : ESCAPED_STRING
 
 !_sum_op :  "+" | "-"
 !_mult_op : "*" | "/" | "//"
+!_comp_op : "<" | ">" | "==" | ">=" | "<=" | "!="
 
 %import common.NUMBER -> NUMBER
 %import common.CNAME -> NAME
