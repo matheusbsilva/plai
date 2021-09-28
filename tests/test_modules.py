@@ -17,6 +17,36 @@ class TestCol:
         column = Col('name', dataframe)
         assert np.array_equal(column(), ['foo', 'bar'])
 
+    def test_col_sum_operation(self, dataframe):
+        column = Col('name', dataframe)
+        result = column + '_fuzz'
+
+        assert np.array_equal(result, ['foo_fuzz', 'bar_fuzz'])
+
+    def test_col_minus_operation(self, dataframe):
+        column = Col('number', dataframe)
+        result = column - 1
+
+        assert np.array_equal(result, [0, 1])
+
+    def test_col_mul_operation(self, dataframe):
+        column = Col('number', dataframe)
+        result = column * 2
+
+        assert np.array_equal(result, [2, 4])
+
+    def test_col_true_div_operation(self, dataframe):
+        column = Col('number', dataframe)
+        result = column / 2.0
+
+        assert np.array_equal(result, [.5, 1])
+
+    def test_col_floor_div_operation(self, dataframe):
+        column = Col('number', dataframe)
+        result = column // 2
+
+        assert np.array_equal(result, [0, 1])
+
 
 class TestDataFrameBuiltinFunctions:
     def test_drop_function_one_col_as_arg(self, dataframe):
