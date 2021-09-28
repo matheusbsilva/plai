@@ -29,6 +29,7 @@ def _make_global_env():
         '-': kwargs_decorator(op.sub),
         '*': kwargs_decorator(op.mul),
         '/': kwargs_decorator(op.truediv),
+        '//': kwargs_decorator(op.floordiv),
         '>': kwargs_decorator(op.gt),
         '<': kwargs_decorator(op.lt),
         '>=': kwargs_decorator(op.ge),

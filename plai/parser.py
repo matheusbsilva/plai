@@ -46,7 +46,7 @@ var : NAME
 string : ESCAPED_STRING
 
 !_sum_op :  "+" | "-"
-!_mult_op : "*" | "/"
+!_mult_op : "*" | "/" | "//"
 
 %import common.NUMBER -> NUMBER
 %import common.CNAME -> NAME
