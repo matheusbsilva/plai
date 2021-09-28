@@ -36,6 +36,16 @@ def eval(sexpr, e=None, **kwargs):
         var, call = sargs
         return getattr(e[var], str(call))
 
+    elif head == Symbol.ALIAS:
+        expr, name = sargs
+        result = eval(expr, **kwargs)
+        dataframe = kwargs['dataframe']
+
+        if(isinstance(result, Col)):
+            result = result()
+
+        return dataframe.assign(**{str(name): result})
+
     elif head == Symbol.PIPELINE:
         pipeline_args, *block = sargs
         dataframe = eval(*pipeline_args)

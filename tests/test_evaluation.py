@@ -97,6 +97,20 @@ class TestPipeline:
             drop(Col('name', dataframe), Col('floats', dataframe), **{'dataframe': dataframe}))
 
 
+class TestAliasEvaluation:
+    def test_alias_change_column_name(self, dataframe):
+        df_result = dataframe.assign(foo=dataframe.name)
+        result = run('.name as foo',  **{'dataframe': dataframe})
+
+        assert result.equals(df_result)
+
+    def test_alias_create_column_with_expr_result(self, dataframe):
+        df_result = dataframe.assign(foo=dataframe.name + '_foo')
+        result = run(".name + '_foo' as foo", **{'dataframe': dataframe})
+
+        assert result.equals(df_result)
+
+
 class TestColEvaluation:
     def test_sugar_col_returns_Col_instance(self, dataframe):
         e = env()
@@ -121,7 +135,7 @@ class TestRowByRowOperations:
         src = """
 df = read_file("%s")
 pipeline(df):
-    .'name' + '_foo'
+    .'name' + '_foo' as name
 """ % path
 
         df_res = read_file(path)

@@ -7,7 +7,8 @@ from .symbol import Symbol
 grammar = r"""
 ?start : _NL* stmt+
 
-?stmt : expr ("as" var)* _NL* -> alias_expr
+?stmt : expr _NL*
+      | alias_expr _NL*
       | assignment _NL*
       | pipeline _NL*
 
@@ -18,6 +19,8 @@ arguments : argvalue("," argvalue)*
 ?argvalue : expr("=" expr)?
 
 pipeline : "pipeline" "(" arguments+ ")" ":" _NL _INDENT stmt+ _DEDENT
+
+alias_expr : expr ("as" var)
 
 ?expr : expr _sum_op term -> binop
       | term

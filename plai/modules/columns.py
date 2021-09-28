@@ -14,4 +14,4 @@ class Col:
         return row
 
     def __add__(self, right):
-        return self.dataframe.apply(self.operation, axis=1, args=(op.add, right))
+        return self() + right
