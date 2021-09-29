@@ -51,19 +51,37 @@ class TestCol:
         column = Col('number', dataframe)
         result = column > 1
 
-        assert np.array_equal(result, [2])
+        assert result.equals(pd.Series([2], index=[1]))
+
+    def test_ge_operation(self, dataframe):
+        column = Col('number', dataframe)
+        result = column >= 1
+
+        assert result.equals(pd.Series([1, 2], index=[0, 1]))
 
     def test_lt_operation(self, dataframe):
         column = Col('number', dataframe)
         result = column < 2
 
-        assert np.array_equal(result, [1])
+        assert result.equals(pd.Series([1], index=[0]))
+
+    def test_le_operation(self, dataframe):
+        column = Col('number', dataframe)
+        result = column <= 2
+
+        assert result.equals(pd.Series([1, 2], index=[0, 1]))
 
     def test_eq_operation(self, dataframe):
         column = Col('number', dataframe)
         result = column == 2
 
-        assert np.array_equal(result, [2])
+        assert result.equals(pd.Series([2], index=[1]))
+
+    def test_ne_operation(self, dataframe):
+        column = Col('number', dataframe)
+        result = column != 2
+
+        assert result.equals(pd.Series([1], index=[0]))
 
 
 class TestDataFrameBuiltinFunctions:

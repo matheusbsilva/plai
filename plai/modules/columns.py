@@ -28,8 +28,17 @@ class Col:
     def __gt__(self, right):
         return self()[self() > right]
 
+    def __ge__(self, right):
+        return self()[self() >= right]
+
     def __lt__(self, right):
         return self()[self() < right]
 
+    def __le__(self, right):
+        return self()[self() <= right]
+
     def __eq__(self, right):
         return self()[self() == right]
+
+    def __ne__(self, right):
+        return self()[self() != right]
