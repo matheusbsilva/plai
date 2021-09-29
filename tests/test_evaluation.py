@@ -129,7 +129,7 @@ class TestColEvaluation:
 
 
 class TestRowByRowOperations:
-    def test_row_operation_returns_expected_value(self, dataframe, csv_file_comma):
+    def test_row_arithmetic_operation(self, dataframe, csv_file_comma):
         path = str(csv_file_comma)
 
         src = """
@@ -140,6 +140,20 @@ pipeline(df):
 
         df_res = read_file(path)
         df_res['name'] = df_res['name'] + '_foo'
+
+        assert run(src).equals(df_res)
+
+    def test_row_filter_operation(self, dataframe, csv_file_comma):
+        path = str(csv_file_comma)
+
+        src = """
+df = read_file("%s")
+pipeline(df):
+    .name == 'foo' as name
+""" % path
+
+        df_res = read_file(path)
+        df_res = df_res.assign(name=df_res.name[df_res.name == 'foo'])
 
         assert run(src).equals(df_res)
 
