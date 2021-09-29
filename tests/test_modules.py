@@ -47,6 +47,24 @@ class TestCol:
 
         assert np.array_equal(result, [0, 1])
 
+    def test_gt_operation(self, dataframe):
+        column = Col('number', dataframe)
+        result = column > 1
+
+        assert np.array_equal(result, [2])
+
+    def test_lt_operation(self, dataframe):
+        column = Col('number', dataframe)
+        result = column < 2
+
+        assert np.array_equal(result, [1])
+
+    def test_eq_operation(self, dataframe):
+        column = Col('number', dataframe)
+        result = column == 2
+
+        assert np.array_equal(result, [2])
+
 
 class TestDataFrameBuiltinFunctions:
     def test_drop_function_one_col_as_arg(self, dataframe):

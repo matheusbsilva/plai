@@ -24,3 +24,12 @@ class Col:
 
     def __floordiv__(self, right):
         return self() // right
+
+    def __gt__(self, right):
+        return self()[self() > right]
+
+    def __lt__(self, right):
+        return self()[self() < right]
+
+    def __eq__(self, right):
+        return self()[self() == right]
