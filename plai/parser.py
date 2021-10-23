@@ -16,17 +16,22 @@ assignment : NAME "=" stmt
 
 arguments : argvalue("," argvalue)*
 
-?argvalue : expr("=" expr)?
+?argvalue : expr ["=" expr]
 
-pipeline : "pipeline" "(" arguments+ ")" ":" _NL _INDENT stmt+ _DEDENT
+pipeline : "pipeline" "(" arguments ")" ":" _NL _INDENT stmt+ _DEDENT
 
 alias_expr : expr ("as" var)
 
-?expr : arith_expr _comp_op expr -> binop
+//?expr : arith_expr _comp_op expr -> binop
+
+//?or_expr
+
+?expr : arith_expr _comp_op arith_expr -> binop
       | arith_expr
 
+
 ?arith_expr : arith_expr _sum_op term -> binop
-      | term
+            | term
 
 ?term : term _mult_op atom_expr -> binop
       | atom_expr
