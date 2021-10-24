@@ -129,20 +129,20 @@ class TestFunctionCall:
     def test_function_call_named_argument(self):
         assert parse('foo(bar=42)') == [
             Symbol('foo'),
-            [Symbol('bar'), 42]
+            [[Symbol('bar'), 42]]
         ]
 
         assert parse('foo(bar=42, buzz=55)') == [
             Symbol('foo'),
-            [Symbol('bar'), 42],
-            [Symbol('buzz'), 55]
+            [[Symbol('bar'), 42], [Symbol('buzz'), 55]]
         ]
 
     def test_function_call_pos_and_named_args(self):
-        assert parse('foo("buzz", bar=42)') == [
+        assert parse('foo("buzz", "bar", bar=42, fuzz="yup")') == [
             Symbol('foo'),
             'buzz',
-            [Symbol('bar'), 42]
+            'bar',
+            [[Symbol('bar'), 42], [Symbol('fuzz'), 'yup']]
         ]
 
 

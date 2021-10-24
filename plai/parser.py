@@ -14,9 +14,12 @@ grammar = r"""
 
 assignment : NAME "=" stmt
 
-arguments : argvalue("," argvalue)*
+arguments : expr("," expr)* ["," kwargs]
+          | kwargs
 
-?argvalue : expr ["=" expr]
+kwargs : argpair("," argpair)*
+
+argpair : NAME "=" expr
 
 pipeline : "pipeline" "(" arguments ")" ":" _NL _INDENT stmt+ _DEDENT
 
@@ -28,7 +31,6 @@ alias_expr : expr ("as" var)
 
 ?expr : arith_expr _comp_op arith_expr -> binop
       | arith_expr
-
 
 ?arith_expr : arith_expr _sum_op term -> binop
             | term
@@ -106,11 +108,14 @@ class PlaiTransformer(InlineTransformer):
     def binop(self, left, op, right):
         return [Symbol(op), left, right]
 
-    def arguments(self, *args):
+    def arguments(self, *sargs):
+        return [*sargs]
+
+    def kwargs(self, *args):
         return [*args]
 
-    def argvalue(self, *args):
-        return [*args]
+    def argpair(self, name, *expr):
+        return [Symbol(name), *expr]
 
     def function_call(self, name, args=[]):
         return [name, *args]
