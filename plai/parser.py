@@ -25,18 +25,21 @@ pipeline : "pipeline" "(" arguments+ ")" ":" _NL _INDENT stmt+ _DEDENT
 
 alias_expr : expr ("as" var)
 
-?expr: not_expr
+?expr: and_expr
+
+?and_expr : not_expr _bool_op and_expr -> bin_op
+          | not_expr
 
 ?not_expr : "not" not_expr -> not_op
           | comparison
 
-?comparison : arith_expr _comp_op expr -> binop
-           | arith_expr
+?comparison : arith_expr _comp_op expr -> bin_op
+            | arith_expr
 
-?arith_expr : arith_expr _sum_op term -> binop
-      | term
+?arith_expr : arith_expr _sum_op term -> bin_op
+            | term
 
-?term : term _mult_op atom_expr -> binop
+?term : term _mult_op atom_expr -> bin_op
       | atom_expr
 
 sugar_column : "." var
@@ -59,6 +62,7 @@ string : STRING
 !_sum_op :  "+" | "-"
 !_mult_op : "*" | "/" | "//"
 !_comp_op : "<" | ">" | "==" | ">=" | "<=" | "!="
+!_bool_op : "and"
 
 NUMBER : /{number}/
 STRING : /{string}/
@@ -109,7 +113,7 @@ class PlaiTransformer(InlineTransformer):
     def not_op(self, value):
         return [Symbol('not'), value]
 
-    def binop(self, left, op, right):
+    def bin_op(self, left, op, right):
         return [Symbol(op), left, right]
 
     def arguments(self, *args):
