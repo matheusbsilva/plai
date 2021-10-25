@@ -65,6 +65,9 @@ class TestBasicExp:
     def test_and_expression(self):
         assert parse('1 and 0') == [Symbol('and'), 1, 0]
 
+    def test_or_expression(self):
+        assert parse('1 or 0') == [Symbol('or'), 1, 0]
+
     def test_comparison_expression(self):
         assert parse('1 > 2') == [Symbol('>'), 1, 2]
         assert parse('1 < 2') == [Symbol('<'), 1, 2]

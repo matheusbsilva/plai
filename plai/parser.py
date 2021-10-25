@@ -25,10 +25,11 @@ pipeline : "pipeline" "(" arguments+ ")" ":" _NL _INDENT stmt+ _DEDENT
 
 alias_expr : expr ("as" var)
 
-?expr: and_expr
+?expr: or_expr
 
-?and_expr : not_expr _bool_op and_expr -> bin_op
-          | not_expr
+?or_expr : and_expr ("or" or_expr)*
+
+?and_expr : not_expr ("and" and_expr)*
 
 ?not_expr : "not" not_expr -> not_op
           | comparison
@@ -62,7 +63,6 @@ string : STRING
 !_sum_op :  "+" | "-"
 !_mult_op : "*" | "/" | "//"
 !_comp_op : "<" | ">" | "==" | ">=" | "<=" | "!="
-!_bool_op : "and"
 
 NUMBER : /{number}/
 STRING : /{string}/
@@ -109,6 +109,12 @@ class PlaiTransformer(InlineTransformer):
 
     def string(self, token):
         return ast.literal_eval(token)
+
+    def or_expr(self, right, left):
+        return [Symbol('or'), right, left]
+
+    def and_expr(self, right, left):
+        return [Symbol('and'), right, left]
 
     def not_op(self, value):
         return [Symbol('not'), value]
