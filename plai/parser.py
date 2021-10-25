@@ -57,15 +57,15 @@ string : STRING
 
 NUMBER : /{number}/
 STRING : /{string}/
+NAME : /{name}/
 
-%import python.NAME -> NAME
 %import common.WS_INLINE
 
 %declare _INDENT _DEDENT
 %ignore WS_INLINE
 
 _NL: /(\r?\n[\t ]*)+/
-""".format(number=tokenize.Number, string=tokenize.String)
+""".format(number=tokenize.Number, string=tokenize.String, name=tokenize.Name)
 
 
 class TreeIndenter(Indenter):
