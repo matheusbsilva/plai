@@ -18,11 +18,14 @@ class TestBasicTokens:
         assert parse('"hello"') == "hello"
         assert parse("'hello'") == "hello"
         assert parse('"hello world"') == "hello world"
+        assert parse('b"\x41"') == b"A"
+        assert parse("r'hello\\nworld'") == r"hello\nworld"
 
     def test_escaped_token_string(self):
         assert parse(r'"hello \"world\""') == 'hello "world"'
         assert parse(r'"hello \n world"') == "hello \n world"
         assert parse(r'"hello \t world"') == "hello \t world"
+        assert parse(r'"hello \r world"') == "hello \r world"
 
     def test_variable_call(self):
         assert parse('bar') == Symbol('bar')

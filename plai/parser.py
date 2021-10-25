@@ -65,10 +65,6 @@ STRING : /{string}/
 %ignore WS_INLINE
 
 _NL: /(\r?\n[\t ]*)+/
-_STRING_INNER: /.*?/
-_STRING_ESC_INNER: _STRING_INNER /(?<!\\)(\\\\)*?/
-
-//ESCAPED_STRING : ("\"" | "'") _STRING_ESC_INNER ("\"" | "'")
 """.format(number=tokenize.Number, string=tokenize.String)
 
 
@@ -87,7 +83,10 @@ def parse(src, return_tree=False):
         parser = Lark(grammar, parser='lalr')
         return parser.parse(src)
 
-    plai_parser = Lark(grammar, parser='lalr', transformer=PlaiTransformer(), postlex=TreeIndenter())
+    plai_parser = Lark(grammar,
+                       parser='lalr',
+                       transformer=PlaiTransformer(),
+                       postlex=TreeIndenter())
     return plai_parser.parse(src)
 
 
@@ -100,9 +99,7 @@ class PlaiTransformer(InlineTransformer):
         return ast.literal_eval(token)
 
     def string(self, token):
-        return token[1:-1].replace('\\"', '"')\
-                .replace('\\n', '\n')\
-                .replace('\\t', '\t')
+        return ast.literal_eval(token)
 
     def binop(self, left, op, right):
         return [Symbol(op), left, right]
