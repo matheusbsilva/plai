@@ -66,6 +66,7 @@ class TestFunctionCall:
 
         assert run('foo(3)', env=e) == 6
 
+    @pytest.mark.skip(reason='Operation not supported yet')
     def test_function_call_with_named_arguments(self):
         e = env()
 

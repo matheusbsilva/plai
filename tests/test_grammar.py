@@ -9,16 +9,23 @@ class TestBasicTokens:
     def test_token_number(self):
         assert parse('7') == 7
         assert parse('8.1') == 8.1
+        assert parse('.5') == 0.5
+        assert parse('1e+1') == 10.0
+        assert parse('0b10') == 2
+        assert parse('1j') == 1j
 
     def test_token_string(self):
         assert parse('"hello"') == "hello"
         assert parse("'hello'") == "hello"
         assert parse('"hello world"') == "hello world"
+        assert parse('b"\x41"') == b"A"
+        assert parse("r'hello\\nworld'") == r"hello\nworld"
 
     def test_escaped_token_string(self):
         assert parse(r'"hello \"world\""') == 'hello "world"'
         assert parse(r'"hello \n world"') == "hello \n world"
         assert parse(r'"hello \t world"') == "hello \t world"
+        assert parse(r'"hello \r world"') == "hello \r world"
 
     def test_variable_call(self):
         assert parse('bar') == Symbol('bar')
