@@ -60,6 +60,11 @@ class TestExpressions:
         assert run('1 and 1') == 1
         assert run('1 and 0') == 0
 
+    def test_or_expression(self):
+        assert run('1 or 1') == 1
+        assert run('1 or 0') == 1
+        assert run('0 or 0') == 0
+
 
 class TestFunctionCall:
     def test_function_call_without_arguments(self):

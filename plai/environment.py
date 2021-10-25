@@ -39,6 +39,7 @@ def _make_global_env():
         '==': kwargs_decorator(op.eq),
         'not': op.not_,
         'and': op.and_,
+        'or': op.or_,
         'pd': pd,
         'print': print,
         'max': max,
