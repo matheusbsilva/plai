@@ -25,8 +25,13 @@ pipeline : "pipeline" "(" arguments+ ")" ":" _NL _INDENT stmt+ _DEDENT
 
 alias_expr : expr ("as" var)
 
-?expr : arith_expr _comp_op expr -> binop
-      | arith_expr
+?expr: not_expr
+
+?not_expr : "not" not_expr -> not_op
+          | comparison
+
+?comparison : arith_expr _comp_op expr -> binop
+           | arith_expr
 
 ?arith_expr : arith_expr _sum_op term -> binop
       | term
@@ -92,14 +97,17 @@ def parse(src, return_tree=False):
 
 class PlaiTransformer(InlineTransformer):
 
-    def start(self, *args):
-        return [Symbol.BEGIN, *args]
+    def start(self, *sargs):
+        return [Symbol.BEGIN, *sargs]
 
     def number(self, token):
         return ast.literal_eval(token)
 
     def string(self, token):
         return ast.literal_eval(token)
+
+    def not_op(self, value):
+        return [Symbol('not'), value]
 
     def binop(self, left, op, right):
         return [Symbol(op), left, right]

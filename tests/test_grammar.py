@@ -57,6 +57,11 @@ class TestBasicExp:
     def test_precedence_using_parentheses(self):
         assert parse('(2 + 5) * 3') == [Symbol('*'), [Symbol('+'), 2, 5], 3]
 
+    def test_not_expression(self):
+        assert parse('not 1') == [Symbol('not'), 1]
+        assert parse('not 0') == [Symbol('not'), 0]
+        assert parse('not "test"') == [Symbol('not'), 'test']
+
     def test_comparison_expression(self):
         assert parse('1 > 2') == [Symbol('>'), 1, 2]
         assert parse('1 < 2') == [Symbol('<'), 1, 2]
