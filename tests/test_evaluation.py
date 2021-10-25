@@ -74,7 +74,17 @@ class TestFunctionCall:
 
         e[Symbol('foo')] = foo
 
-        assert run('foo(3, z=2)', env=e) == 6
+        assert run('foo(3, z=3)', env=e) == 9
+
+    def test_function_call_with_named_args_expression(self):
+        e = env()
+
+        def foo(x, z=0, y=10):
+            return x * z
+
+        e[Symbol('foo')] = foo
+
+        assert run('foo(3, z=3+3)', env=e) == 18
 
 
 class TestPipeline:

@@ -1,5 +1,3 @@
-import uuid
-
 from .parser import parse
 from .symbol import Symbol
 from .modules import Col
@@ -58,7 +56,19 @@ def eval(sexpr, e=None, **kwargs):
     else:
         proc = eval(head, e, **kwargs)
         vals = [eval(sarg, e, **kwargs) for sarg in sargs]
+        # posvals = []
+        # kvals = kwargs
 
+        # if(len(sargs) != 0):
+        #     *posargs, kargs = sargs
+
+        #     posvals = [eval(arg, e, **kwargs) for arg in posargs]
+
+        #     for karg in kargs:
+        #         name, expr = karg
+        #         kvals[str(name)] = eval(expr, e, **kwargs)
+
+        # return proc(*posvals, **kvals)
         return proc(*vals, **kwargs)
 
 

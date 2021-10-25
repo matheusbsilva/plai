@@ -1,4 +1,5 @@
 from lark import Lark
+from lark import Tree
 from lark import InlineTransformer
 from lark.indenter import Indenter
 
@@ -109,10 +110,15 @@ class PlaiTransformer(InlineTransformer):
         return [Symbol(op), left, right]
 
     def arguments(self, *sargs):
-        return [*sargs]
+        import ipdb;ipdb.set_trace()
+        # kargs = []
 
-    def kwargs(self, *args):
-        return [*args]
+        # if(isinstance(sargs[-1], Tree) and sargs[-1].data == 'kwargs'):
+        #     kargs = sargs[-1].children
+        #     sargs = sargs[:-1]
+
+        # return [*sargs, kargs]
+        return [*sargs]
 
     def argpair(self, name, *expr):
         return [Symbol(name), *expr]
