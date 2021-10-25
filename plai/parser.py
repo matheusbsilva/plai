@@ -25,13 +25,22 @@ pipeline : "pipeline" "(" arguments+ ")" ":" _NL _INDENT stmt+ _DEDENT
 
 alias_expr : expr ("as" var)
 
-?expr : arith_expr _comp_op expr -> binop
-      | arith_expr
+?expr: or_expr
 
-?arith_expr : arith_expr _sum_op term -> binop
-      | term
+?or_expr : and_expr ("or" or_expr)*
 
-?term : term _mult_op atom_expr -> binop
+?and_expr : not_expr ("and" and_expr)*
+
+?not_expr : "not" not_expr -> not_op
+          | comparison
+
+?comparison : arith_expr _comp_op expr -> bin_op
+            | arith_expr
+
+?arith_expr : arith_expr _sum_op term -> bin_op
+            | term
+
+?term : term _mult_op atom_expr -> bin_op
       | atom_expr
 
 sugar_column : "." var
@@ -92,8 +101,8 @@ def parse(src, return_tree=False):
 
 class PlaiTransformer(InlineTransformer):
 
-    def start(self, *args):
-        return [Symbol.BEGIN, *args]
+    def start(self, *sargs):
+        return [Symbol.BEGIN, *sargs]
 
     def number(self, token):
         return ast.literal_eval(token)
@@ -101,7 +110,16 @@ class PlaiTransformer(InlineTransformer):
     def string(self, token):
         return ast.literal_eval(token)
 
-    def binop(self, left, op, right):
+    def or_expr(self, right, left):
+        return [Symbol('or'), right, left]
+
+    def and_expr(self, right, left):
+        return [Symbol('and'), right, left]
+
+    def not_op(self, value):
+        return [Symbol('not'), value]
+
+    def bin_op(self, left, op, right):
         return [Symbol(op), left, right]
 
     def arguments(self, *args):

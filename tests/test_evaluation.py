@@ -1,4 +1,3 @@
-import pandas as pd
 import pytest
 
 from plai.interpreter import run
@@ -45,6 +44,26 @@ class TestExpressions:
     def test_precedence_with_parentheses_number_expression(self):
         assert run('(2 + 3) * 5') == 25
         assert run('(6 / 2) * 6') == 18
+
+    def test_comparison_expression(self):
+        assert run('1 > 1') is False
+        assert run('1 >= 1') is True
+        assert run('2 < 2') is False
+        assert run('2 <= 2') is True
+
+    def test_not_expression(self):
+        assert run('not 1') is False
+        assert run('not 0') is True
+        assert run('not "foo"') is False
+
+    def test_and_expression(self):
+        assert run('1 and 1') == 1
+        assert run('1 and 0') == 0
+
+    def test_or_expression(self):
+        assert run('1 or 1') == 1
+        assert run('1 or 0') == 1
+        assert run('0 or 0') == 0
 
 
 class TestFunctionCall:
