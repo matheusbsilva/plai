@@ -51,6 +51,11 @@ class TestExpressions:
         assert run('2 < 2') is False
         assert run('2 <= 2') is True
 
+    def test_not_expression(self):
+        assert run('not 1') is False
+        assert run('not 0') is True
+        assert run('not "foo"') is False
+
 
 class TestFunctionCall:
     def test_function_call_without_arguments(self):
