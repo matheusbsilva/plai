@@ -1,3 +1,6 @@
+import tokenize
+import ast
+
 from lark import Lark
 from lark import InlineTransformer
 from lark.indenter import Indenter
@@ -46,15 +49,18 @@ sugar_column : "." var
 
 var : NAME
 
-string : ESCAPED_STRING
+string : STRING
 
 !_sum_op :  "+" | "-"
 !_mult_op : "*" | "/" | "//"
 !_comp_op : "<" | ">" | "==" | ">=" | "<=" | "!="
 
-%import common.NUMBER -> NUMBER
-%import common.CNAME -> NAME
+NUMBER : /{number}/
+STRING : /{string}/
+
+%import python.NAME -> NAME
 %import common.WS_INLINE
+
 %declare _INDENT _DEDENT
 %ignore WS_INLINE
 
@@ -62,8 +68,8 @@ _NL: /(\r?\n[\t ]*)+/
 _STRING_INNER: /.*?/
 _STRING_ESC_INNER: _STRING_INNER /(?<!\\)(\\\\)*?/
 
-ESCAPED_STRING : ("\"" | "'") _STRING_ESC_INNER ("\"" | "'")
-"""
+//ESCAPED_STRING : ("\"" | "'") _STRING_ESC_INNER ("\"" | "'")
+""".format(number=tokenize.Number, string=tokenize.String)
 
 
 class TreeIndenter(Indenter):
@@ -91,7 +97,7 @@ class PlaiTransformer(InlineTransformer):
         return [Symbol.BEGIN, *args]
 
     def number(self, token):
-        return float(token)
+        return ast.literal_eval(token)
 
     def string(self, token):
         return token[1:-1].replace('\\"', '"')\

@@ -9,6 +9,10 @@ class TestBasicTokens:
     def test_token_number(self):
         assert parse('7') == 7
         assert parse('8.1') == 8.1
+        assert parse('.5') == 0.5
+        assert parse('1e+1') == 10.0
+        assert parse('0b10') == 2
+        assert parse('1j') == 1j
 
     def test_token_string(self):
         assert parse('"hello"') == "hello"
