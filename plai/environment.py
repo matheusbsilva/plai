@@ -1,5 +1,7 @@
 import operator as op
 
+import pandas as pd
+
 from .symbol import Symbol
 from .modules import frame
 
@@ -35,6 +37,7 @@ def _make_global_env():
         '>=': kwargs_decorator(op.ge),
         '<=': kwargs_decorator(op.le),
         '==': kwargs_decorator(op.eq),
+        'pd': pd,
         'print': print,
         'max': max,
         'min': min,

@@ -1,4 +1,5 @@
 import pytest
+import pandas as pd
 
 from plai.environment import env
 from plai.environment import global_env
@@ -29,3 +30,10 @@ class TestEnvironment:
         assert Symbol('dropna') in e
         assert Symbol('read_file') in e
         assert Symbol('export_csv') in e
+
+    def test_pandas_available_on_env(self):
+        e = env()
+        pd_symbol = Symbol('pd')
+
+        assert pd_symbol in e
+        assert e[pd_symbol] == pd
