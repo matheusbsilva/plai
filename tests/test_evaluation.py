@@ -56,6 +56,10 @@ class TestExpressions:
         assert run('not 0') is True
         assert run('not "foo"') is False
 
+    def test_and_expression(self):
+        assert run('1 and 1') == 1
+        assert run('1 and 0') == 0
+
 
 class TestFunctionCall:
     def test_function_call_without_arguments(self):
