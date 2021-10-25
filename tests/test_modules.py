@@ -83,6 +83,12 @@ class TestCol:
 
         assert result.equals(pd.Series([1], index=[0]))
 
+    def test_contains_full_match_operation(self, dataframe):
+        column = Col('name', dataframe)
+        result = column.contains('foo')
+
+        assert result.equals(pd.Series(['foo'], index=[0]))
+
 
 class TestDataFrameBuiltinFunctions:
     def test_drop_function_one_col_as_arg(self, dataframe):

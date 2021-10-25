@@ -6,24 +6,30 @@ class Col:
     def __call__(self):
         return self.dataframe[self.name]
 
-    def operation(self, row, operation, *sargs):
-        row[self.name] = operation(row[self.name], *sargs)
-        return row
-
     def __add__(self, right):
-        return self() + right
+        if(isinstance(right, Col)):
+            right = right()
+        return self().__add__(right)
 
     def __sub__(self, right):
-        return self() - right
+        if(isinstance(right, Col)):
+            right = right()
+        return self().__sub__(right)
 
     def __mul__(self, right):
-        return self() * right
+        if(isinstance(right, Col)):
+            right = right()
+        return self().__mul__(right)
 
     def __truediv__(self, right):
-        return self() / right
+        if(isinstance(right, Col)):
+            right = right()
+        return self().__truediv__(right)
 
     def __floordiv__(self, right):
-        return self() // right
+        if(isinstance(right, Col)):
+            right = right()
+        return self().__floordiv__(right)
 
     def __gt__(self, right):
         return self()[self() > right]
@@ -42,3 +48,6 @@ class Col:
 
     def __ne__(self, right):
         return self()[self() != right]
+
+    def contains(self, name):
+        return self()[self().str.contains(name)]
