@@ -72,6 +72,9 @@ class TestExpressions:
     def test_none_constant(self):
         assert run('None') is None
 
+    def test_list(self):
+        assert run('[1, 2]') == [1, 2]
+
 
 class TestFunctionCall:
     def test_function_call_without_arguments(self):
