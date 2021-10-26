@@ -216,3 +216,10 @@ class TestPipeline:
             [Symbol.COLUMN, 'col'],
             [Symbol.COLUMN, 'col2']
         ]
+
+    def test_slice_dataframe(self):
+        assert parse('{.col, .col2}') == [
+            Symbol.SLICE_DF,
+            [Symbol.COLUMN, 'col'],
+            [Symbol.COLUMN, 'col2']
+        ]
