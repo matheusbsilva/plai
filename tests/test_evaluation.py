@@ -65,6 +65,13 @@ class TestExpressions:
         assert run('1 or 0') == 1
         assert run('0 or 0') == 0
 
+    def test_bool_constants(self):
+        assert run('True') is True
+        assert run('False') is False
+
+    def test_none_constant(self):
+        assert run('None') is None
+
 
 class TestFunctionCall:
     def test_function_call_without_arguments(self):

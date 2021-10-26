@@ -1,5 +1,3 @@
-import uuid
-
 from .parser import parse
 from .symbol import Symbol
 from .modules import Col
@@ -17,7 +15,7 @@ def eval(sexpr, e=None, **kwargs):
             raise NameError('name %s is undefined' % sexpr)
         return value
 
-    elif isinstance(sexpr, (int, float, str)):
+    elif isinstance(sexpr, (int, float, str, type(None))):
         return sexpr
 
     head, *sargs = sexpr
