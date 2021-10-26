@@ -28,7 +28,13 @@ class TestBasicTokens:
         assert parse(r'"hello \r world"') == "hello \r world"
 
     def test_const_true(self):
-        assert parse('True') == True
+        assert parse('True') is True
+
+    def test_const_false(self):
+        assert parse('False') is False
+
+    def test_const_none(self):
+        assert parse('None') is None
 
     def test_variable_call(self):
         assert parse('bar') == Symbol('bar')

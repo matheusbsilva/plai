@@ -56,6 +56,8 @@ sugar_column : "." var
       | var
       | "(" expr ")"
       | "True" -> const_true
+      | "False" -> const_false
+      | "None" -> const_none
 
 var : NAME
 
@@ -143,6 +145,12 @@ class PlaiTransformer(InlineTransformer):
 
     def const_true(self):
         return True
+
+    def const_false(self):
+        return False
+
+    def const_none(self):
+        return None
 
     def var(self, token):
         return Symbol(token)
