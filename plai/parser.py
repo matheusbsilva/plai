@@ -8,14 +8,17 @@ from lark.indenter import Indenter
 from .symbol import Symbol
 
 grammar = r"""
-?start : _NL* stmt+
+?start : (_NL | stmt)*
+       | single_stmt _NL*
 
-?stmt : expr _NL*
-      | alias_expr _NL*
-      | assignment _NL*
-      | pipeline _NL*
+?stmt : expr _NL
+      | alias_expr _NL
+      | assignment _NL
+      | pipeline
 
-assignment : NAME "=" stmt
+?single_stmt : (expr | alias_expr | assignment)
+
+assignment : NAME "=" expr
 
 arguments : argvalue("," argvalue)*
 

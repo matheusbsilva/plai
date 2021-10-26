@@ -108,9 +108,27 @@ class TestBasicExp:
         assert parse('"hello" + "world"') == [Symbol('+'), 'hello', 'world']
 
     def test_sum_using_attr_call(self):
-        assert parse('foo.bar + fuzz.buzz') == [Symbol('+'),
-                [Symbol.ATTR, Symbol('foo'), Symbol('bar')],
-                [Symbol.ATTR, Symbol('fuzz'), Symbol('buzz')]]
+        assert parse('foo.bar + fuzz.buzz') == [
+            Symbol('+'),
+            [Symbol.ATTR, Symbol('foo'), Symbol('bar')],
+            [Symbol.ATTR, Symbol('fuzz'), Symbol('buzz')]
+        ]
+
+
+class TestStmts:
+    def test_multiple_stmts_newline_presence(self):
+        stmts = """
+a = 2
+b = 3
+"""
+        assert parse(stmts) == [
+            Symbol.BEGIN,
+            [Symbol.ASSIGNMENT, Symbol('a'), 2],
+            [Symbol.ASSIGNMENT, Symbol('b'), 3]
+        ]
+
+    def test_one_stmt(self):
+        assert parse('1 + 1') == [Symbol('+'), 1, 1]
 
 
 class TestFunctionCall:
@@ -175,12 +193,13 @@ class TestAssignment:
 
 class TestPipeline:
     def test_pipeline_declaration(self):
-        assert parse('pipeline(bar): \n\tfoo()') == [Symbol.PIPELINE,
-                                                 [Symbol('bar')],
-                                                 [Symbol('foo')]]
-        assert parse('pipeline(bar, fuzz): \n\tfoo()') == [
+        src = """
+pipeline(bar):
+    foo()
+"""
+        assert parse(src) == [
             Symbol.PIPELINE,
-            [Symbol('bar'), Symbol('fuzz')],
+            [Symbol('bar')],
             [Symbol('foo')]
         ]
 
@@ -195,7 +214,12 @@ class TestPipeline:
             parse('.()')
 
     def test_multiple_stmts_on_pipeline(self):
-        parsed = parse('pipeline(bar): \n\tfoo(.bar) fuzz(.bar)')
+        src = """
+pipeline(bar):
+    foo(.bar)
+    fuzz(.bar)
+"""
+        parsed = parse(src)
         assert parsed == [Symbol.PIPELINE, [Symbol('bar')],
                           [Symbol('foo'), [Symbol.COLUMN, 'bar']],
                           [Symbol('fuzz'), [Symbol.COLUMN, 'bar']]]
