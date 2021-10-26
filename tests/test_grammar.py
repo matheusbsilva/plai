@@ -130,6 +130,17 @@ b = 3
     def test_one_stmt(self):
         assert parse('1 + 1') == [Symbol('+'), 1, 1]
 
+    def test_one_line_stmts(self):
+        res = parse('pipeline(df): .col + 1;.col + 2')
+        assert res == [
+            Symbol.PIPELINE,
+            [Symbol('df')],
+            [
+                [Symbol('+'), [Symbol.COLUMN, 'col'], 1],
+                [Symbol('+'), [Symbol.COLUMN, 'col'], 2]
+            ]
+        ]
+
 
 class TestFunctionCall:
     def test_basic_function_call(self):
@@ -220,9 +231,14 @@ pipeline(bar):
     fuzz(.bar)
 """
         parsed = parse(src)
-        assert parsed == [Symbol.PIPELINE, [Symbol('bar')],
-                          [Symbol('foo'), [Symbol.COLUMN, 'bar']],
-                          [Symbol('fuzz'), [Symbol.COLUMN, 'bar']]]
+        assert parsed == [
+            Symbol.PIPELINE,
+            [Symbol('bar')],
+            [
+                [Symbol('foo'), [Symbol.COLUMN, 'bar']],
+                [Symbol('fuzz'), [Symbol.COLUMN, 'bar']]
+            ]
+        ]
 
     def test_sugar_column_expression(self):
         assert parse('.col + 1') == [Symbol('+'), [Symbol.COLUMN, 'col'], 1]
