@@ -1,3 +1,5 @@
+import pandas as pd
+
 from .parser import parse
 from .symbol import Symbol
 from .modules import Col
@@ -26,6 +28,14 @@ def eval(sexpr, e=None, **kwargs):
 
     elif head == Symbol.LIST:
         return [eval(arg, e, **kwargs) for arg in sargs]
+
+    elif head == Symbol.SLICE_DF:
+        cols = [eval(arg, e, **kwargs) for arg in sargs]
+
+        if any(not isinstance(col, Col) for col in cols):
+            raise ValueError('Values must be columns')
+
+        return pd.concat([col() for col in cols], axis=1)
 
     elif head == Symbol.COLUMN:
         if 'dataframe' not in kwargs:
