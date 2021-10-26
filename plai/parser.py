@@ -55,6 +55,7 @@ sugar_column : "." var
       | string
       | var
       | "(" expr ")"
+      | "True" -> const_true
 
 var : NAME
 
@@ -139,6 +140,9 @@ class PlaiTransformer(InlineTransformer):
 
     def assignment(self, name, *stmt):
         return [Symbol.ASSIGNMENT, Symbol(name), *stmt]
+
+    def const_true(self):
+        return True
 
     def var(self, token):
         return Symbol(token)
