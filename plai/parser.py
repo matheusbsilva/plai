@@ -55,6 +55,7 @@ sugar_column : "." var
       | string
       | var
       | "(" expr ")"
+      | "[" [expr ("," expr)*] "]" -> list_expr
       | "True" -> const_true
       | "False" -> const_false
       | "None" -> const_none
@@ -151,6 +152,9 @@ class PlaiTransformer(InlineTransformer):
 
     def const_none(self):
         return None
+
+    def list_expr(self, *args):
+        return [Symbol.LIST, *args]
 
     def var(self, token):
         return Symbol(token)
