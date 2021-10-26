@@ -55,6 +55,8 @@ sugar_column : "." var
       | string
       | var
       | "(" expr ")"
+      | "[" [expr ("," expr)*] "]" -> list_expr
+      | "{{" [expr ("," expr)*] "}}" -> slice_df_expr
       | "True" -> const_true
       | "False" -> const_false
       | "None" -> const_none
@@ -151,6 +153,12 @@ class PlaiTransformer(InlineTransformer):
 
     def const_none(self):
         return None
+
+    def slice_df_expr(self, *args):
+        return [Symbol.SLICE_DF, *args]
+
+    def list_expr(self, *args):
+        return [Symbol.LIST, *args]
 
     def var(self, token):
         return Symbol(token)

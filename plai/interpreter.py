@@ -1,3 +1,5 @@
+import pandas as pd
+
 from .parser import parse
 from .symbol import Symbol
 from .modules import Col
@@ -22,7 +24,18 @@ def eval(sexpr, e=None, **kwargs):
 
     if head == Symbol.ASSIGNMENT:
         var, exp = sargs
-        e[var] = eval(exp, e)
+        e[var] = eval(exp, e, **kwargs)
+
+    elif head == Symbol.LIST:
+        return [eval(arg, e, **kwargs) for arg in sargs]
+
+    elif head == Symbol.SLICE_DF:
+        cols = [eval(arg, e, **kwargs) for arg in sargs]
+
+        if any(not isinstance(col, Col) for col in cols):
+            raise ValueError('Values must be columns')
+
+        return pd.concat([col() for col in cols], axis=1)
 
     elif head == Symbol.COLUMN:
         if 'dataframe' not in kwargs:
@@ -46,7 +59,7 @@ def eval(sexpr, e=None, **kwargs):
 
     elif head == Symbol.PIPELINE:
         pipeline_args, *block = sargs
-        dataframe = eval(*pipeline_args)
+        dataframe = eval(*pipeline_args, e, **kwargs)
 
         for stmt in block:
             dataframe = eval(stmt, e, **{'dataframe': dataframe})

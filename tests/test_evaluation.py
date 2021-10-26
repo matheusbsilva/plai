@@ -72,6 +72,9 @@ class TestExpressions:
     def test_none_constant(self):
         assert run('None') is None
 
+    def test_list(self):
+        assert run('[1, 2]') == [1, 2]
+
 
 class TestFunctionCall:
     def test_function_call_without_arguments(self):
@@ -207,3 +210,28 @@ class TestAttrCall:
         e[Symbol('df')] = dataframe
 
         assert run('df.columns').equals(dataframe.columns)
+
+
+class TestSliceDataframe:
+    def test_slice_dataframe_operation(self, dataframe):
+        e = env()
+        e[Symbol('df')] = dataframe
+
+        src = """
+pipeline(df):
+    {.name, .number}
+"""
+
+        assert run(src, env=e).equals(dataframe[['name', 'number']])
+
+    def test_invalid_slice_dataframe_operation(self, dataframe):
+        with pytest.raises(ValueError):
+            e = env()
+            e[Symbol('df')] = dataframe
+
+            src = """
+pipeline(df):
+    {.name, 1}
+"""
+
+            run(src, env=e)

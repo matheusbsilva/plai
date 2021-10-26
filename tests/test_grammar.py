@@ -42,6 +42,9 @@ class TestBasicTokens:
     def test_attribute_call(self):
         assert parse('bar.foo') == [Symbol.ATTR, Symbol('bar'), Symbol('foo')]
 
+    def test_list(self):
+        assert parse('[1, 2]') == [Symbol.LIST, 1, 2]
+
 
 class TestBasicExp:
     def test_sum(self):
@@ -175,10 +178,11 @@ class TestPipeline:
         assert parse('pipeline(bar): \n\tfoo()') == [Symbol.PIPELINE,
                                                  [Symbol('bar')],
                                                  [Symbol('foo')]]
-        assert parse('pipeline(bar, fuzz): \n\tfoo()') == [Symbol.PIPELINE,
-                                                       [Symbol('bar'),
-                                                           Symbol('fuzz')],
-                                                       [Symbol('foo')]]
+        assert parse('pipeline(bar, fuzz): \n\tfoo()') == [
+            Symbol.PIPELINE,
+            [Symbol('bar'), Symbol('fuzz')],
+            [Symbol('foo')]
+        ]
 
     def test_sugar_column_call(self):
         assert parse('.col') == [Symbol.COLUMN, 'col']
@@ -200,4 +204,22 @@ class TestPipeline:
         assert parse('.col + 1') == [Symbol('+'), [Symbol.COLUMN, 'col'], 1]
 
     def test_as_operator(self):
-        assert parse('.col as foo') == [Symbol.ALIAS, [Symbol.COLUMN, 'col'], Symbol('foo')]
+        assert parse('.col as foo') == [
+            Symbol.ALIAS,
+            [Symbol.COLUMN, 'col'],
+            Symbol('foo')
+        ]
+
+    def test_list_columns(self):
+        assert parse('[.col, .col2]') == [
+            Symbol.LIST,
+            [Symbol.COLUMN, 'col'],
+            [Symbol.COLUMN, 'col2']
+        ]
+
+    def test_slice_dataframe(self):
+        assert parse('{.col, .col2}') == [
+            Symbol.SLICE_DF,
+            [Symbol.COLUMN, 'col'],
+            [Symbol.COLUMN, 'col2']
+        ]
