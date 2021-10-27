@@ -76,6 +76,9 @@ class TestExpressions:
     def test_list(self):
         assert run('[1, 2]') == [1, 2]
 
+    def test_dict(self):
+        assert run("{'foo': 'bar', 'fuzz': 42}") == {'foo': 'bar', 'fuzz': 42}
+
 
 class TestFunctionCall:
     def test_function_call_without_arguments(self):

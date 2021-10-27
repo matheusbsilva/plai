@@ -31,6 +31,9 @@ def eval(sexpr, e=None, **kwargs):
     elif head == Symbol.LIST:
         return [eval(arg, e, **kwargs) for arg in sargs]
 
+    elif head == Symbol.DICT:
+        return {eval(key, e, **kwargs): eval(value, e, **kwargs) for key, value in sargs}
+
     elif head == Symbol.SLICE_DF:
         cols = [eval(arg, e, **kwargs) for arg in sargs]
 
