@@ -25,7 +25,7 @@ arguments : argvalue("," argvalue)*
 ?argvalue : expr("=" expr)?
 
 pipeline : "pipeline" "(" arguments+ ")" ":" suite
-         | "pipeline" "(" arguments+ ")" "->" (NAME | string) ":" suite -> pipeline_output_stmt
+         | "pipeline" "(" arguments+ ")" "->" (var | string) ":" suite -> pipeline_output_stmt
 
 suite : _simple_stmt | _NL _INDENT stmt+ _DEDENT
 
