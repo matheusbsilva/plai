@@ -324,6 +324,20 @@ pipeline(df) -> foo:
 
         assert result.equals(dataframe)
 
+    def test_typed_argument_matching_dataframe_schema(self, dataframe):
+        df_type = {'name': str, 'number': int, 'floats': float, 'dates': 'date'}
+
+        env = self.setup_env(dataframe)
+        env[Symbol('t')] = df_type
+
+        src = "pipeline(df: t): .name + '_foo' as foo_name"
+
+        run(src, env=env)
+        dataframe['foo_name'] = dataframe.name + '_foo'
+        result = env[Symbol('foo')]
+
+        assert result.equals(dataframe)
+
 
 class TestTypeStmt:
     def test_basic_type_stmt(self):

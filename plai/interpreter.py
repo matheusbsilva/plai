@@ -90,6 +90,12 @@ def eval(sexpr, e=None, **kwargs):
 
     elif head == Symbol.PIPELINE:
         pipeline_args, block = sargs
+        arg, *arg_type = pipeline_args
+
+        if(arg_type):
+            # TODO: Implement validation
+            pass
+
         dataframe = eval(*pipeline_args, e, **kwargs)
 
         for stmt in block:
