@@ -57,6 +57,13 @@ def eval(sexpr, e=None, **kwargs):
 
         return dataframe.assign(**{str(name): result})
 
+    elif head == Symbol.OUTPUT:
+        target, pipeline = sargs
+        pipeline_result = eval(pipeline, e, **kwargs)
+        pipeline_result.to_csv(target, index=False)
+
+        return pipeline_result
+
     elif head == Symbol.PIPELINE:
         pipeline_args, block = sargs
         dataframe = eval(*pipeline_args, e, **kwargs)
