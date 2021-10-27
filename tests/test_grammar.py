@@ -45,6 +45,11 @@ class TestBasicTokens:
     def test_list(self):
         assert parse('[1, 2]') == [Symbol.LIST, 1, 2]
 
+    def test_dict(self):
+        assert parse("{'foo': 'bar', 'fuzz': 42}") == [
+            Symbol.DICT, ['foo', 'bar'], ['fuzz', 42]
+        ]
+
 
 class TestBasicExp:
     def test_sum(self):

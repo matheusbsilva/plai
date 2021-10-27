@@ -59,15 +59,22 @@ sugar_column : "." NAME
            | sugar_column
            | atom
 
-?atom : NUMBER -> number
+
+?atom : "(" expr ")"
+      | "[" [expr ("," expr)*] "]" -> list_expr
+      | "{{" key_content "}}"
+      | NUMBER -> number
       | string
       | var
-      | "(" expr ")"
-      | "[" [expr ("," expr)*] "]" -> list_expr
-      | "{{" [expr ("," expr)*] "}}" -> slice_df_expr
       | "True" -> const_true
       | "False" -> const_false
       | "None" -> const_none
+
+?key_content : _key_value_list? -> dict_expr
+             | [expr ("," expr)*] -> slice_df_expr
+
+_key_value_list : key_value("," key_value)*[","]
+key_value : expr ":" expr
 
 var : NAME
 
@@ -170,6 +177,12 @@ class PlaiTransformer(InlineTransformer):
 
     def list_expr(self, *args):
         return [Symbol.LIST, *args]
+
+    def key_value(self, key, value):
+        return [key, value]
+
+    def dict_expr(self, *sargs):
+        return [Symbol.DICT, *sargs]
 
     def var(self, token):
         return Symbol(token)
