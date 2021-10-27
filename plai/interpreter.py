@@ -60,7 +60,11 @@ def eval(sexpr, e=None, **kwargs):
     elif head == Symbol.OUTPUT:
         target, pipeline = sargs
         pipeline_result = eval(pipeline, e, **kwargs)
-        pipeline_result.to_csv(target, index=False)
+
+        if(isinstance(target, Symbol)):
+            e[target] = pipeline_result
+        elif(isinstance(target, str)):
+            pipeline_result.to_csv(target, index=False)
 
         return pipeline_result
 

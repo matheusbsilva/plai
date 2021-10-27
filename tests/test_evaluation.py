@@ -273,14 +273,44 @@ pipeline(df) -> '{path}':
 
         assert result_file.equals(dataframe)
 
-    def test_file_output_stmt_for_single_line_pipeline(self):
-        pass
+    def test_file_output_stmt_for_single_line_pipeline(self,
+                                                       dataframe,
+                                                       tmp_path):
+        env = self.setup_env(dataframe)
+        path = tmp_path / 'test.csv'
 
-    def test_var_output_stmt_for_multiple_line_pipeline(self):
-        pass
+        src = "pipeline(df) -> '{path}': .name + '_foo' as foo_name".format(path=path)
 
-    def test_var_output_stmt_for_single_line_pipeline(self):
-        pass
+        run(src, env=env)
+        dataframe['foo_name'] = dataframe.name + '_foo'
+        result_file = pd.read_csv(path)
+
+        assert result_file.equals(dataframe)
+
+    def test_var_output_stmt_for_multiple_line_pipeline(self, dataframe):
+        env = self.setup_env(dataframe)
+
+        src = """
+pipeline(df) -> foo:
+    .name + '_foo' as foo_name
+"""
+
+        run(src, env=env)
+        dataframe['foo_name'] = dataframe.name + '_foo'
+        result = env[Symbol('foo')]
+
+        assert result.equals(dataframe)
+
+    def test_var_output_stmt_for_single_line_pipeline(self, dataframe):
+        env = self.setup_env(dataframe)
+
+        src = "pipeline(df) -> foo: .name + '_foo' as foo_name"
+
+        run(src, env=env)
+        dataframe['foo_name'] = dataframe.name + '_foo'
+        result = env[Symbol('foo')]
+
+        assert result.equals(dataframe)
 
     def test_output_stmt_for_not_for_pipeline(self):
         pass
