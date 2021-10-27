@@ -34,6 +34,15 @@ def eval(sexpr, e=None, **kwargs):
     elif head == Symbol.DICT:
         return {eval(key, e, **kwargs): eval(value, e, **kwargs) for key, value in sargs}
 
+    elif head == Symbol.TYPE:
+        name, exp = sargs
+        type_definition = eval(exp, e, **kwargs)
+
+        if not isinstance(type_definition, dict):
+            raise ValueError('type must be a dict')
+
+        e[name] = eval(exp, e, **kwargs)
+
     elif head == Symbol.SLICE_DF:
         cols = [eval(arg, e, **kwargs) for arg in sargs]
 

@@ -323,3 +323,16 @@ pipeline(df) -> foo:
         result = env[Symbol('foo')]
 
         assert result.equals(dataframe)
+
+
+class TestTypeStmt:
+    def test_basic_type_stmt(self):
+        e = env()
+
+        run("type foo = {'col': 'float64'}", e)
+
+        assert e[Symbol('foo')] == {'col': 'float64'}
+
+    def test_type_expr_is_not_dict(self):
+        with pytest.raises(ValueError):
+            run("type foo = 'bar'")
