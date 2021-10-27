@@ -25,6 +25,7 @@ arguments : argvalue("," argvalue)*
 ?argvalue : expr("=" expr)?
 
 pipeline : "pipeline" "(" arguments+ ")" ":" suite
+         | "pipeline" "(" arguments+ ")" "->" (var | string) ":" suite -> pipeline_output_stmt
 
 suite : _simple_stmt | _NL _INDENT stmt+ _DEDENT
 
@@ -179,3 +180,8 @@ class PlaiTransformer(InlineTransformer):
     def pipeline(self, *args):
         pipeline_args, *block = args
         return [Symbol.PIPELINE, pipeline_args, *block]
+
+    def pipeline_output_stmt(self, *args):
+        pipeline_args, target, *block = args
+        pipeline = [Symbol.PIPELINE, pipeline_args, *block]
+        return [Symbol.OUTPUT, target, pipeline]

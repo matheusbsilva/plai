@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 
 from .parser import parse
@@ -56,6 +58,23 @@ def eval(sexpr, e=None, **kwargs):
             result = result()
 
         return dataframe.assign(**{str(name): result})
+
+    elif head == Symbol.OUTPUT:
+        target, pipeline = sargs
+        pipeline_result = eval(pipeline, e, **kwargs)
+
+        if(isinstance(target, Symbol)):
+            e[target] = pipeline_result
+        elif(isinstance(target, str)):
+            _, ext = os.path.splitext(target)
+
+            if(ext != '.csv'):
+                # TODO: support multiple files type
+                raise ValueError('File type not supported')
+
+            pipeline_result.to_csv(target, index=False)
+
+        return pipeline_result
 
     elif head == Symbol.PIPELINE:
         pipeline_args, block = sargs

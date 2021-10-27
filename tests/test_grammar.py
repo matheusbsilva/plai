@@ -271,3 +271,65 @@ pipeline(bar):
             [Symbol.COLUMN, 'col'],
             [Symbol.COLUMN, 'col2']
         ]
+
+    def test_var_output_stmt_multiple_line_for_pipeline(self):
+        src = """
+pipeline(df) -> foo:
+    .name as foo_name
+"""
+        assert parse(src) == [
+            Symbol.OUTPUT,
+            Symbol('foo'),
+            [
+                Symbol.PIPELINE,
+                [Symbol('df')],
+                [
+                    [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
+                ]
+            ]
+        ]
+
+    def test_var_output_stmt_single_line_for_pipeline(self):
+        src = "pipeline(df) -> foo: .name as foo_name"
+        assert parse(src) == [
+            Symbol.OUTPUT,
+            Symbol('foo'),
+            [
+                Symbol.PIPELINE,
+                [Symbol('df')],
+                [
+                    [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
+                ]
+            ]
+        ]
+
+    def test_string_output_stmt_multiple_line_for_pipeline(self):
+        src = """
+pipeline(df) -> 'test.csv':
+    .name as foo_name
+"""
+        assert parse(src) == [
+            Symbol.OUTPUT,
+            'test.csv',
+            [
+                Symbol.PIPELINE,
+                [Symbol('df')],
+                [
+                    [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
+                ]
+            ]
+        ]
+
+    def test_string_output_stmt_single_line_for_pipeline(self):
+        src = """ pipeline(df) -> 'test.csv': .name as foo_name """
+        assert parse(src) == [
+            Symbol.OUTPUT,
+            'test.csv',
+            [
+                Symbol.PIPELINE,
+                [Symbol('df')],
+                [
+                    [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
+                ]
+            ]
+        ]

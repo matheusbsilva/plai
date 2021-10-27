@@ -1,4 +1,5 @@
 import pytest
+import pandas as pd
 
 from plai.interpreter import run
 from plai.modules import Col
@@ -249,3 +250,73 @@ pipeline(df):
 """
 
             run(src, env=e)
+
+
+class TestOutputStmtPipeline:
+    def setup_env(self, dataframe):
+        e = env()
+        e[Symbol('df')] = dataframe
+        return e
+
+    def test_csv_output_stmt_for_multiple_line_pipeline(self, dataframe, tmp_path):
+        env = self.setup_env(dataframe)
+        path = tmp_path / 'test.csv'
+
+        src = """
+pipeline(df) -> '{path}':
+    .name + '_foo' as foo_name
+""".format(path=path)
+
+        run(src, env=env)
+        dataframe['foo_name'] = dataframe.name + '_foo'
+        result_file = pd.read_csv(path)
+
+        assert result_file.equals(dataframe)
+
+    def test_csv_output_stmt_for_single_line_pipeline(self,
+                                                       dataframe,
+                                                       tmp_path):
+        env = self.setup_env(dataframe)
+        path = tmp_path / 'test.csv'
+
+        src = "pipeline(df) -> '{path}': .name + '_foo' as foo_name".format(path=path)
+
+        run(src, env=env)
+        dataframe['foo_name'] = dataframe.name + '_foo'
+        result_file = pd.read_csv(path)
+
+        assert result_file.equals(dataframe)
+
+    def test_output_for_other_files_type(self, dataframe, tmp_path):
+        self.setup_env(dataframe)
+        path = tmp_path / 'test.xlsx'
+
+        src = "pipeline(df) -> '{path}': .name + '_foo' as foo_name".format(path=path)
+
+        with pytest.raises(ValueError):
+            run(src)
+
+    def test_var_output_stmt_for_multiple_line_pipeline(self, dataframe):
+        env = self.setup_env(dataframe)
+
+        src = """
+pipeline(df) -> foo:
+    .name + '_foo' as foo_name
+"""
+
+        run(src, env=env)
+        dataframe['foo_name'] = dataframe.name + '_foo'
+        result = env[Symbol('foo')]
+
+        assert result.equals(dataframe)
+
+    def test_var_output_stmt_for_single_line_pipeline(self, dataframe):
+        env = self.setup_env(dataframe)
+
+        src = "pipeline(df) -> foo: .name + '_foo' as foo_name"
+
+        run(src, env=env)
+        dataframe['foo_name'] = dataframe.name + '_foo'
+        result = env[Symbol('foo')]
+
+        assert result.equals(dataframe)
