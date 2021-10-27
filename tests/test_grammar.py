@@ -136,6 +136,12 @@ b = 3
         assert parse('1 + 1') == [Symbol('+'), 1, 1]
 
 
+class TestTypeDefinition:
+    def test_basic_type_definition(self):
+        assert parse("type df_type = {'col': 'float64'}") == [
+            Symbol.TYPE, Symbol('df_type'), [Symbol.DICT, ['col', 'float64']]
+        ]
+
 
 class TestFunctionCall:
     def test_basic_function_call(self):

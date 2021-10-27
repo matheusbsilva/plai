@@ -14,11 +14,13 @@ grammar = r"""
 ?stmt : expr _NL
       | alias_expr _NL
       | assignment _NL
+      | type_stmt _NL
       | pipeline
 
-?single_stmt : (expr | alias_expr | assignment)
+?single_stmt : (expr | alias_expr | assignment | type_stmt)
 
 assignment : NAME "=" expr
+type_stmt : "type" NAME "=" expr
 
 arguments : argvalue("," argvalue)*
 
@@ -162,6 +164,9 @@ class PlaiTransformer(InlineTransformer):
 
     def assignment(self, name, *stmt):
         return [Symbol.ASSIGNMENT, Symbol(name), *stmt]
+
+    def type_stmt(self, name, *stmt):
+        return [Symbol.TYPE, Symbol(name), *stmt]
 
     def const_true(self):
         return True
