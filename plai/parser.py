@@ -26,9 +26,9 @@ arguments : argvalue("," argvalue)*
 
 pipeline : "pipeline" "(" arguments+ ")" ":" suite
 
-?suite : simple_stmt | _NL _INDENT stmt+ _DEDENT
+suite : _simple_stmt | _NL _INDENT stmt+ _DEDENT
 
-?simple_stmt : single_stmt(";" single_stmt)*
+_simple_stmt : single_stmt(";" single_stmt)*
 
 alias_expr : expr ("as" var)
 
@@ -123,9 +123,6 @@ class PlaiTransformer(InlineTransformer):
         return ast.literal_eval(token)
 
     def suite(self, *sargs):
-        return [*sargs]
-
-    def simple_stmt(self, *sargs):
         return [*sargs]
 
     def or_expr(self, right, left):

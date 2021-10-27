@@ -110,20 +110,34 @@ class TestFunctionCall:
 class TestPipeline:
     def test_pipeline_raise_error_on_undeclared_dataframe(self):
         with pytest.raises(NameError):
-            run('pipeline(df): \n\tdrop(.name)')
+            src = """
+pipeline(df):
+    drop(.name)
+"""
+            run(src)
 
     def test_pipeline_execute_stmts(self, dataframe):
         e = env()
         e[Symbol('df')] = dataframe
+        src = """
+pipeline(df):
+    drop(.name)
+"""
+        res = run(src, env=e)
 
-        assert run('pipeline(df): \n\tdrop(.name)', env=e).equals(
+        assert res.equals(
             drop(Col('name', dataframe), **{'dataframe': dataframe}))
 
     def test_pipeline_execute_multiple_stmts(self, dataframe):
         e = env()
         e[Symbol('df')] = dataframe
+        src = """
+pipeline(df):
+    drop(.name)
+    drop(.floats)
+"""
 
-        assert run('pipeline(df): \n\tdrop(.name) \n\tdrop(.floats)', env=e).equals(
+        assert run(src, env=e).equals(
             drop(Col('name', dataframe), Col('floats', dataframe), **{'dataframe': dataframe}))
 
 

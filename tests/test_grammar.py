@@ -130,16 +130,6 @@ b = 3
     def test_one_stmt(self):
         assert parse('1 + 1') == [Symbol('+'), 1, 1]
 
-    def test_one_line_stmts(self):
-        res = parse('pipeline(df): .col + 1;.col + 2')
-        assert res == [
-            Symbol.PIPELINE,
-            [Symbol('df')],
-            [
-                [Symbol('+'), [Symbol.COLUMN, 'col'], 1],
-                [Symbol('+'), [Symbol.COLUMN, 'col'], 2]
-            ]
-        ]
 
 
 class TestFunctionCall:
@@ -211,7 +201,7 @@ pipeline(bar):
         assert parse(src) == [
             Symbol.PIPELINE,
             [Symbol('bar')],
-            [Symbol('foo')]
+            [[Symbol('foo')]]
         ]
 
     def test_sugar_column_call(self):
@@ -223,6 +213,24 @@ pipeline(bar):
 
         with pytest.raises(UnexpectedToken):
             parse('.()')
+
+    def test_one_line_stmt_on_pipeline(self):
+        assert parse('pipeline(df): .col + 1') == [
+            Symbol.PIPELINE,
+            [Symbol('df')],
+            [[Symbol('+'), [Symbol.COLUMN, 'col'], 1]]
+        ]
+
+    def test_one_line_stmts_on_pipeline(self):
+        res = parse('pipeline(df): .col + 1;.col + 2')
+        assert res == [
+            Symbol.PIPELINE,
+            [Symbol('df')],
+            [
+                [Symbol('+'), [Symbol.COLUMN, 'col'], 1],
+                [Symbol('+'), [Symbol.COLUMN, 'col'], 2]
+            ]
+        ]
 
     def test_multiple_stmts_on_pipeline(self):
         src = """
