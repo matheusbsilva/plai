@@ -332,7 +332,7 @@ pipeline(df) -> 'test.csv':
         ]
 
     def test_string_output_stmt_single_line_for_pipeline(self):
-        src = """ pipeline(df) -> 'test.csv': .name as foo_name """
+        src = "pipeline(df) -> 'test.csv': .name as foo_name"
         assert parse(src) == [
             Symbol.OUTPUT,
             'test.csv',
@@ -342,5 +342,25 @@ pipeline(df) -> 'test.csv':
                 [
                     [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
                 ]
+            ]
+        ]
+
+    def test_basic_typed_df_argument(self):
+        src = "pipeline(df: t): .name as foo_name"
+        assert parse(src) == [
+            Symbol.PIPELINE,
+            [Symbol('df'), Symbol('t')],
+            [
+                [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
+            ]
+        ]
+
+    def test_expr_typed_df_argument(self):
+        src = "pipeline(read_file('test.csv'): t): .name as foo_name"
+        assert parse(src) == [
+            Symbol.PIPELINE,
+            [[Symbol('read_file'), 'test.csv'], Symbol('t')],
+            [
+                [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
             ]
         ]

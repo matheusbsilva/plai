@@ -20,14 +20,17 @@ grammar = r"""
 ?single_stmt : (expr | alias_expr | assignment | type_stmt)
 
 assignment : NAME "=" expr
+
 type_stmt : "type" NAME "=" expr
 
 arguments : argvalue("," argvalue)*
 
 ?argvalue : expr("=" expr)?
 
-pipeline : "pipeline" "(" arguments+ ")" ":" suite
-         | "pipeline" "(" arguments+ ")" "->" (var | string) ":" suite -> pipeline_output_stmt
+pipeline : "pipeline" "(" pipeline_args ")" ":" suite
+         | "pipeline" "(" pipeline_args ")" "->" (var | string) ":" suite -> pipeline_output_stmt
+
+pipeline_args: expr[":" var]
 
 suite : _simple_stmt | _NL _INDENT stmt+ _DEDENT
 
@@ -194,6 +197,9 @@ class PlaiTransformer(InlineTransformer):
 
     def sugar_column(self, name):
         return [Symbol.COLUMN, str(name)]
+
+    def pipeline_args(self, arg, *arg_type):
+        return [arg, *arg_type]
 
     def pipeline(self, *args):
         pipeline_args, *block = args
