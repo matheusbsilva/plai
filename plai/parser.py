@@ -8,20 +8,27 @@ from lark.indenter import Indenter
 from .symbol import Symbol
 
 grammar = r"""
-?start : _NL* stmt+
+?start : (_NL | stmt)*
+       | single_stmt _NL*
 
-?stmt : expr _NL*
-      | alias_expr _NL*
-      | assignment _NL*
-      | pipeline _NL*
+?stmt : expr _NL
+      | alias_expr _NL
+      | assignment _NL
+      | pipeline
 
-assignment : NAME "=" stmt
+?single_stmt : (expr | alias_expr | assignment)
+
+assignment : NAME "=" expr
 
 arguments : argvalue("," argvalue)*
 
 ?argvalue : expr("=" expr)?
 
-pipeline : "pipeline" "(" arguments+ ")" ":" _NL _INDENT stmt+ _DEDENT
+pipeline : "pipeline" "(" arguments+ ")" ":" suite
+
+suite : _simple_stmt | _NL _INDENT stmt+ _DEDENT
+
+_simple_stmt : single_stmt(";" single_stmt)*
 
 alias_expr : expr ("as" var)
 
@@ -43,7 +50,7 @@ alias_expr : expr ("as" var)
 ?term : term _mult_op atom_expr -> bin_op
       | atom_expr
 
-sugar_column : "." var
+sugar_column : "." NAME
              | "." string
 
 ?atom_expr : atom_expr "(" arguments? ")" -> function_call
@@ -114,6 +121,9 @@ class PlaiTransformer(InlineTransformer):
 
     def string(self, token):
         return ast.literal_eval(token)
+
+    def suite(self, *sargs):
+        return [*sargs]
 
     def or_expr(self, right, left):
         return [Symbol('or'), right, left]

@@ -58,7 +58,7 @@ def eval(sexpr, e=None, **kwargs):
         return dataframe.assign(**{str(name): result})
 
     elif head == Symbol.PIPELINE:
-        pipeline_args, *block = sargs
+        pipeline_args, block = sargs
         dataframe = eval(*pipeline_args, e, **kwargs)
 
         for stmt in block:
