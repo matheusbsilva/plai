@@ -364,3 +364,13 @@ pipeline(df) -> 'test.csv':
                 [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
             ]
         ]
+
+    def test_basic_typed_output_df_argument(self):
+        src = "pipeline(df, output_type): .name as foo_name"
+        assert parse(src) == [
+            Symbol.PIPELINE,
+            [Symbol('df'), [Symbol('output_type')]],
+            [
+                [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
+            ]
+        ]

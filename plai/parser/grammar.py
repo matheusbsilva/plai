@@ -23,7 +23,7 @@ arguments : argvalue("," argvalue)*
 pipeline : "pipeline" "(" pipeline_args ")" ":" suite
          | "pipeline" "(" pipeline_args ")" "->" (var | string) ":" suite -> pipeline_output_stmt
 
-pipeline_args: expr[":" var]
+pipeline_args: expr[":" var]["," arguments]
 
 suite : _simple_stmt | _NL _INDENT stmt+ _DEDENT
 
