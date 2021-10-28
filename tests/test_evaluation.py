@@ -277,8 +277,8 @@ pipeline(df) -> '{path}':
         assert result_file.equals(dataframe)
 
     def test_csv_output_stmt_for_single_line_pipeline(self,
-                                                       dataframe,
-                                                       tmp_path):
+                                                      dataframe,
+                                                      tmp_path):
         env = self.setup_env(dataframe)
         path = tmp_path / 'test.csv'
 
@@ -323,3 +323,64 @@ pipeline(df) -> foo:
         result = env[Symbol('foo')]
 
         assert result.equals(dataframe)
+
+    def test_typed_argument_matching_dataframe_schema(self, dataframe):
+        df_type = {
+            'name': 'str',
+            'number': 'int',
+            'floats': 'float',
+            'dates': 'str'
+        }
+
+        env = self.setup_env(dataframe)
+        env[Symbol('t')] = df_type
+
+        src = "pipeline(df: t): .name + '_foo' as foo_name"
+
+        run(src, env=env)
+        dataframe['foo_name'] = dataframe.name + '_foo'
+        result = env[Symbol('df')]
+
+        assert result.equals(dataframe)
+
+    def test_typed_argument_not_matching_dataframe_schema(self, dataframe):
+        df_type = {
+            'name': 'float',
+            'floats': 'int',
+            'dates': 'str',
+            'number': 'int'
+        }
+
+        env = self.setup_env(dataframe)
+        env[Symbol('t')] = df_type
+
+        src = "pipeline(df: t): .name + '_foo' as foo_name"
+
+        with pytest.raises(ValueError):
+            run(src, env=env)
+
+    def test_column_not_present_on_dataframe_schema(self, dataframe):
+        df_type = {
+            'foo': 'int'
+        }
+
+        env = self.setup_env(dataframe)
+        env[Symbol('t')] = df_type
+
+        src = "pipeline(df: t): .name + '_foo' as foo_name"
+
+        with pytest.raises(ValueError):
+            run(src, env=env)
+
+
+class TestTypeStmt:
+    def test_basic_type_stmt(self):
+        e = env()
+
+        run("type foo = {'col': 'float64'}", e)
+
+        assert e[Symbol('foo')] == {'col': 'float64'}
+
+    def test_type_expr_is_not_dict(self):
+        with pytest.raises(ValueError):
+            run("type foo = 'bar'")

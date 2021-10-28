@@ -20,7 +20,8 @@ def dataframe():
     df = pd.DataFrame(data={'name': ['foo', 'bar'],
                             'number': [1, 2],
                             'floats': [2.5, 3.4],
-                            'dates': ['2019-01-01', '2019-10-06']})
+                            'dates': ['2019-01-01', '2019-06-01']
+                            })
 
     return df
 

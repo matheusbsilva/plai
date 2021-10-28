@@ -6,6 +6,7 @@ from .parser import parse
 from .symbol import Symbol
 from .modules import Col
 from .environment import env
+from .validation import validate_schema
 
 
 def eval(sexpr, e=None, **kwargs):
@@ -33,6 +34,15 @@ def eval(sexpr, e=None, **kwargs):
 
     elif head == Symbol.DICT:
         return {eval(key, e, **kwargs): eval(value, e, **kwargs) for key, value in sargs}
+
+    elif head == Symbol.TYPE:
+        name, exp = sargs
+        type_definition = eval(exp, e, **kwargs)
+
+        if not isinstance(type_definition, dict):
+            raise ValueError('type must be a dict')
+
+        e[name] = eval(exp, e, **kwargs)
 
     elif head == Symbol.SLICE_DF:
         cols = [eval(arg, e, **kwargs) for arg in sargs]
@@ -81,7 +91,16 @@ def eval(sexpr, e=None, **kwargs):
 
     elif head == Symbol.PIPELINE:
         pipeline_args, block = sargs
-        dataframe = eval(*pipeline_args, e, **kwargs)
+        arg, *arg_type = pipeline_args
+        dataframe = eval(arg, e, **kwargs)
+
+        if(arg_type):
+            schema = eval(*arg_type, e, **kwargs)
+            validation = validate_schema(dataframe, schema)
+
+            if 'errors' in validation:
+                msg = '\n'.join(validation['errors'])
+                raise ValueError(msg)
 
         for stmt in block:
             dataframe = eval(stmt, e, **{'dataframe': dataframe})
