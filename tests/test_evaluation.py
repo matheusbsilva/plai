@@ -359,6 +359,19 @@ pipeline(df) -> foo:
         with pytest.raises(ValueError):
             run(src, env=env)
 
+    def test_column_not_present_on_dataframe_schema(self, dataframe):
+        df_type = {
+            'foo': 'int'
+        }
+
+        env = self.setup_env(dataframe)
+        env[Symbol('t')] = df_type
+
+        src = "pipeline(df: t): .name + '_foo' as foo_name"
+
+        with pytest.raises(ValueError):
+            run(src, env=env)
+
 
 class TestTypeStmt:
     def test_basic_type_stmt(self):
