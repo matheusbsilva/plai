@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 import pandas as pd
 
@@ -20,7 +22,9 @@ def dataframe():
     df = pd.DataFrame(data={'name': ['foo', 'bar'],
                             'number': [1, 2],
                             'floats': [2.5, 3.4],
-                            'dates': ['2019-01-01', '2019-10-06']})
+                            'dates': [datetime(2019, 1, 1),
+                                      datetime(2019, 1, 6)]
+                            })
 
     return df
 
