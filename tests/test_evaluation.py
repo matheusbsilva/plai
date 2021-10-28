@@ -277,8 +277,8 @@ pipeline(df) -> '{path}':
         assert result_file.equals(dataframe)
 
     def test_csv_output_stmt_for_single_line_pipeline(self,
-                                                       dataframe,
-                                                       tmp_path):
+                                                      dataframe,
+                                                      tmp_path):
         env = self.setup_env(dataframe)
         path = tmp_path / 'test.csv'
 
@@ -329,7 +329,7 @@ pipeline(df) -> foo:
             'name': 'str',
             'number': 'int',
             'floats': 'float',
-            'dates': 'datetime64'
+            'dates': 'str'
         }
 
         env = self.setup_env(dataframe)
@@ -347,7 +347,7 @@ pipeline(df) -> foo:
         df_type = {
             'name': 'float',
             'floats': 'int',
-            'dates': 'datetime64',
+            'dates': 'str',
             'number': 'int'
         }
 

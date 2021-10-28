@@ -7,7 +7,7 @@ class TestSchemaValidation:
             'name': 'str',
             'number': 'int',
             'floats': 'float',
-            'dates': 'datetime64'
+            'dates': 'str'
         }
         assert validate_schema(dataframe, schema) == {}
 
@@ -16,7 +16,7 @@ class TestSchemaValidation:
             'name': 'str',
             'number': 'float',
             'floats': 'int',
-            'dates': 'datetime64'
+            'dates': 'str'
         }
         expected_errors = {
             'errors': [
@@ -31,7 +31,7 @@ class TestSchemaValidation:
             'name': 'str',
             'number': 'int',
             'floats': 'float',
-            'dates': 'datetime64',
+            'dates': 'str',
             'foo': 'str'
         }
         expected_errors = {
@@ -46,7 +46,7 @@ class TestSchemaValidation:
             'name': 'str',
             'number': 'float',
             'floats': 'int',
-            'dates': 'datetime64',
+            'dates': 'str',
             'foo': 'str'
         }
         expected_errors = {
