@@ -12,10 +12,14 @@ def validate_schema(dataframe, schema):
     errors = []
 
     for col, dtype in schema.items():
+        if col not in dataframe:
+            errors.append("DataFrame has no column '{}'".format(col))
+            continue
+
         valid = VALIDATORS[dtype](dataframe[col])
         if not valid:
             col_dtype = dataframe[col].dtype
-            errors.append({col: 'expected type `{}` got `{}`'.format(dtype, col_dtype)})
+            errors.append("Expected '{}' to be '{}' got '{}'".format(col, dtype, col_dtype))
 
     if errors:
         return {'errors': errors}
