@@ -6,6 +6,7 @@ from .parser import parse
 from .symbol import Symbol
 from .modules import Col
 from .environment import env
+from .validation import validate_schema
 
 
 def eval(sexpr, e=None, **kwargs):
@@ -91,12 +92,15 @@ def eval(sexpr, e=None, **kwargs):
     elif head == Symbol.PIPELINE:
         pipeline_args, block = sargs
         arg, *arg_type = pipeline_args
+        dataframe = eval(arg, e, **kwargs)
 
         if(arg_type):
-            # TODO: Implement validation
-            pass
+            schema = eval(*arg_type, e, **kwargs)
+            validation = validate_schema(dataframe, schema)
 
-        dataframe = eval(*pipeline_args, e, **kwargs)
+            if 'errors' in validation:
+                msg = '\n'.join(validation['errors'])
+                raise ValueError(msg)
 
         for stmt in block:
             dataframe = eval(stmt, e, **{'dataframe': dataframe})

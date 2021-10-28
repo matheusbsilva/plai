@@ -325,7 +325,12 @@ pipeline(df) -> foo:
         assert result.equals(dataframe)
 
     def test_typed_argument_matching_dataframe_schema(self, dataframe):
-        df_type = {'name': str, 'number': int, 'floats': float, 'dates': 'date'}
+        df_type = {
+            'name': 'str',
+            'number': 'int',
+            'floats': 'float',
+            'dates': 'datetime64'
+        }
 
         env = self.setup_env(dataframe)
         env[Symbol('t')] = df_type
@@ -334,9 +339,25 @@ pipeline(df) -> foo:
 
         run(src, env=env)
         dataframe['foo_name'] = dataframe.name + '_foo'
-        result = env[Symbol('foo')]
+        result = env[Symbol('df')]
 
         assert result.equals(dataframe)
+
+    def test_typed_argument_not_matching_dataframe_schema(self, dataframe):
+        df_type = {
+            'name': 'float',
+            'floats': 'int',
+            'dates': 'datetime64',
+            'number': 'int'
+        }
+
+        env = self.setup_env(dataframe)
+        env[Symbol('t')] = df_type
+
+        src = "pipeline(df: t): .name + '_foo' as foo_name"
+
+        with pytest.raises(ValueError):
+            run(src, env=env)
 
 
 class TestTypeStmt:
