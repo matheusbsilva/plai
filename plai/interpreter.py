@@ -91,10 +91,16 @@ def eval(sexpr, e=None, **kwargs):
 
     elif head == Symbol.PIPELINE:
         pipeline_args, block = sargs
-        arg, *arg_type = pipeline_args
-        dataframe = eval(arg, e, **kwargs)
+        main_args, *oargs = pipeline_args
+        df_arg, *arg_type = main_args
+        output_type = None
 
-        if(arg_type):
+        dataframe = eval(df_arg, e, **kwargs)
+
+        if oargs:
+            output_type, *other_args = oargs
+
+        if arg_type:
             schema = eval(*arg_type, e, **kwargs)
             validation = validate_schema(dataframe, schema)
 
@@ -104,6 +110,14 @@ def eval(sexpr, e=None, **kwargs):
 
         for stmt in block:
             dataframe = eval(stmt, e, **{'dataframe': dataframe})
+
+        if output_type:
+            schema = eval(*output_type, e, **kwargs)
+            validation = validate_schema(dataframe, schema)
+
+            if 'errors' in validation:
+                msg = '\n'.join(validation['errors'])
+                raise ValueError(msg)
 
         return dataframe
 

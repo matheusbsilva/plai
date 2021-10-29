@@ -372,6 +372,90 @@ pipeline(df) -> foo:
         with pytest.raises(ValueError):
             run(src, env=env)
 
+    def test_invalid_typed_output_df_argument(self, dataframe):
+        env = self.setup_env(dataframe)
+        df_output = {
+            'foo': 'int'
+        }
+        env[Symbol('t')] = df_output
+
+        src = "pipeline(df, t): .name + '_foo' as foo_name"
+
+        with pytest.raises(ValueError):
+            run(src, env=env)
+
+    def test_valid_typed_output_df_argument(self, dataframe):
+        env = self.setup_env(dataframe)
+
+        df_output = {
+            'name': 'str',
+            'number': 'int',
+            'floats': 'float',
+            'dates': 'str'
+        }
+
+        env[Symbol('t')] = df_output
+
+        src = "pipeline(df: t, t): .name + '_foo' as foo_name"
+
+        run(src, env=env)
+        dataframe['foo_name'] = dataframe.name + '_foo'
+        result = env[Symbol('df')]
+
+        assert result.equals(dataframe)
+
+    def test_input_output_df_validation(self, dataframe):
+        env = self.setup_env(dataframe)
+
+        df_input = {
+            'name': 'str',
+            'number': 'int',
+            'floats': 'float',
+            'dates': 'str'
+        }
+
+        df_output = {
+            'name': 'str',
+            'number': 'int',
+            'floats': 'float',
+            'dates': 'str',
+            'foo_name': 'str'
+        }
+
+        env[Symbol('input_t')] = df_input
+        env[Symbol('output_t')] = df_output
+
+        src = "pipeline(df: input_t, output_t): .name + '_foo' as foo_name"
+
+        run(src, env=env)
+        dataframe['foo_name'] = dataframe.name + '_foo'
+        result = env[Symbol('df')]
+
+        assert result.equals(dataframe)
+
+    def test_invalid_input_output_df_validation(self, dataframe):
+        env = self.setup_env(dataframe)
+
+        df_input = {
+            'name': 'str',
+            'number': 'int',
+            'floats': 'float',
+            'dates': 'str'
+        }
+
+        df_output = {
+            **df_input,
+            'foo_name': 'int'
+        }
+
+        env[Symbol('input_t')] = df_input
+        env[Symbol('output_t')] = df_output
+
+        src = "pipeline(df: input_t, output_t): .name + '_foo' as foo_name"
+
+        with pytest.raises(ValueError):
+            run(src, env=env)
+
 
 class TestTypeStmt:
     def test_basic_type_stmt(self):

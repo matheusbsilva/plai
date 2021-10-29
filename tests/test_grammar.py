@@ -338,7 +338,7 @@ pipeline(df) -> 'test.csv':
             'test.csv',
             [
                 Symbol.PIPELINE,
-                [Symbol('df')],
+                [[Symbol('df')]],
                 [
                     [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
                 ]
@@ -349,7 +349,7 @@ pipeline(df) -> 'test.csv':
         src = "pipeline(df: t): .name as foo_name"
         assert parse(src) == [
             Symbol.PIPELINE,
-            [Symbol('df'), Symbol('t')],
+            [[Symbol('df'), Symbol('t')]],
             [
                 [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
             ]
@@ -359,17 +359,27 @@ pipeline(df) -> 'test.csv':
         src = "pipeline(read_file('test.csv'): t): .name as foo_name"
         assert parse(src) == [
             Symbol.PIPELINE,
-            [[Symbol('read_file'), 'test.csv'], Symbol('t')],
+            [[[Symbol('read_file'), 'test.csv'], Symbol('t')]],
             [
                 [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
             ]
         ]
 
-    def test_basic_typed_output_df_argument(self):
+    def test_typed_output_df_argument(self):
         src = "pipeline(df, output_type): .name as foo_name"
         assert parse(src) == [
             Symbol.PIPELINE,
-            [Symbol('df'), [Symbol('output_type')]],
+            [[Symbol('df')], [Symbol('output_type')]],
+            [
+                [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
+            ]
+        ]
+
+    def test_typed_input_and_output_df_argument(self):
+        src = "pipeline(df: t, output_type): .name as foo_name"
+        assert parse(src) == [
+            Symbol.PIPELINE,
+            [[Symbol('df'), Symbol('t')], [Symbol('output_type')]],
             [
                 [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
             ]
