@@ -42,11 +42,12 @@ def eval(sexpr, e=None, **kwargs):
         if not isinstance(type_definition, dict):
             raise ValueError('type must be a dict')
 
-        e[name] = eval(exp, e, **kwargs)
+        e[name] = type_definition
 
     elif head == Symbol.SLICE_DF:
         cols = [eval(arg, e, **kwargs) for arg in sargs]
 
+        # TODO: return specific element or error
         if any(not isinstance(col, Col) for col in cols):
             raise ValueError('Values must be columns')
 
