@@ -17,7 +17,7 @@ class TreeIndenter(Indenter):
 def parse(src, return_tree=False):
 
     if return_tree is True:
-        parser = Lark(grammar, parser='lalr')
+        parser = Lark(grammar, parser='lalr', postlex=TreeIndenter())
         return parser.parse(src)
 
     plai_parser = Lark(grammar,

@@ -23,8 +23,7 @@ arguments : argvalue("," argvalue)*
 pipeline : "pipeline" "(" pipeline_args ")" ":" suite
          | "pipeline" "(" pipeline_args ")" "->" (var | string) ":" suite -> pipeline_output_stmt
 
-pipeline_main_arg : expr[":" var]
-pipeline_args : pipeline_main_arg["," arguments]
+pipeline_args : expr[":" var]
 
 suite : _simple_stmt | _NL _INDENT stmt+ _DEDENT
 
@@ -34,14 +33,16 @@ alias_expr : expr ("as" var)
 
 ?expr: or_expr
 
-?or_expr : and_expr ("or" or_expr)*
+?or_expr : or_expr "or" and_expr
+         | and_expr
 
-?and_expr : not_expr ("and" and_expr)*
+?and_expr : and_expr "and" not_expr
+          | not_expr
 
 ?not_expr : "not" not_expr -> not_op
           | comparison
 
-?comparison : arith_expr _comp_op expr -> bin_op
+?comparison : arith_expr _comp_op arith_expr -> bin_op
             | arith_expr
 
 ?arith_expr : arith_expr _sum_op term -> bin_op

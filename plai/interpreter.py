@@ -92,14 +92,10 @@ def eval(sexpr, e=None, **kwargs):
 
     elif head == Symbol.PIPELINE:
         pipeline_args, block = sargs
-        main_args, *oargs = pipeline_args
-        df_arg, *arg_type = main_args
+        df_arg, *arg_type = pipeline_args
         output_type = None
 
         dataframe = eval(df_arg, e, **kwargs)
-
-        if oargs:
-            output_type, *other_args = oargs
 
         if arg_type:
             schema = eval(*arg_type, e, **kwargs)
