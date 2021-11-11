@@ -82,8 +82,8 @@ class PlaiTransformer(InlineTransformer):
     def sugar_column(self, name):
         return [Symbol.COLUMN, str(name)]
 
-    def pipeline_args(self, main_arg, *args):
-        return [main_arg, *args]
+    def pipeline_args(self, main_arg):
+        return [main_arg]
 
     def pipeline(self, *args):
         pipeline_args, *block = args

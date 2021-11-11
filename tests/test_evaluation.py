@@ -255,7 +255,6 @@ pipeline(df):
             run(src, env=e)
 
 
-@pytest.mark.skip(reason='Not implemented yet')
 class TestTypedDataframe:
     def setup_env(self, dataframe):
         e = env()
@@ -273,7 +272,7 @@ class TestTypedDataframe:
         env = self.setup_env(dataframe)
         env[Symbol('t')] = df_type
 
-        src = "t df"
+        src = "t::df"
 
         run(src, env=env)
         result = env[Symbol('df')]
@@ -291,7 +290,7 @@ class TestTypedDataframe:
         env = self.setup_env(dataframe)
         env[Symbol('t')] = df_type
 
-        src = "t df"
+        src = "t::df"
 
         with pytest.raises(ValueError):
             run(src, env=env)
@@ -304,7 +303,7 @@ class TestTypedDataframe:
         env = self.setup_env(dataframe)
         env[Symbol('t')] = df_type
 
-        src = "t df"
+        src = "t::df"
 
         with pytest.raises(ValueError):
             run(src, env=env)
@@ -320,7 +319,7 @@ class TestTypedDataframe:
         env = self.setup_env(df)
         env[Symbol('t')] = df_type
 
-        src = f"t read_file('{csv_file_comma}')"
+        src = f"t::read_file('{csv_file_comma}')"
         assert run(src).equals(df)
 
     def test_typed_stmt_is_not_a_dataframe(self):
@@ -332,7 +331,7 @@ class TestTypedDataframe:
         e[Symbol('t')] = df_type
 
         with pytest.raises(TypeError):
-            run("t 'foo'")
+            run("t::'foo'")
 
 
 class TestOutputStmtPipeline:
@@ -404,55 +403,6 @@ pipeline(df) -> foo:
 
         assert result.equals(dataframe)
 
-    def test_typed_argument_matching_dataframe_schema(self, dataframe):
-        df_type = {
-            'name': 'str',
-            'number': 'int',
-            'floats': 'float',
-            'dates': 'str'
-        }
-
-        env = self.setup_env(dataframe)
-        env[Symbol('t')] = df_type
-
-        src = "pipeline(df: t): .name + '_foo' as foo_name"
-
-        run(src, env=env)
-        dataframe['foo_name'] = dataframe.name + '_foo'
-        result = env[Symbol('df')]
-
-        assert result.equals(dataframe)
-
-    def test_typed_argument_not_matching_dataframe_schema(self, dataframe):
-        df_type = {
-            'name': 'float',
-            'floats': 'int',
-            'dates': 'str',
-            'number': 'int'
-        }
-
-        env = self.setup_env(dataframe)
-        env[Symbol('t')] = df_type
-
-        src = "pipeline(df: t): .name + '_foo' as foo_name"
-
-        with pytest.raises(ValueError):
-            run(src, env=env)
-
-    def test_column_not_present_on_dataframe_schema(self, dataframe):
-        df_type = {
-            'foo': 'int'
-        }
-
-        env = self.setup_env(dataframe)
-        env[Symbol('t')] = df_type
-
-        src = "pipeline(df: t): .name + '_foo' as foo_name"
-
-        with pytest.raises(ValueError):
-            run(src, env=env)
-
-    @pytest.mark.skip(reason='Will be refactored')
     def test_invalid_typed_output_df_argument(self, dataframe):
         env = self.setup_env(dataframe)
         df_output = {
@@ -460,12 +410,11 @@ pipeline(df) -> foo:
         }
         env[Symbol('t')] = df_output
 
-        src = "pipeline(df, t): .name + '_foo' as foo_name"
+        src = "t::pipeline(df): .name + '_foo' as foo_name"
 
         with pytest.raises(ValueError):
             run(src, env=env)
 
-    @pytest.mark.skip(reason='Will be refactored')
     def test_valid_typed_output_df_argument(self, dataframe):
         env = self.setup_env(dataframe)
 
@@ -478,7 +427,7 @@ pipeline(df) -> foo:
 
         env[Symbol('t')] = df_output
 
-        src = "pipeline(df: t, t): .name + '_foo' as foo_name"
+        src = "t::pipeline(df): .name + '_foo' as foo_name"
 
         run(src, env=env)
         dataframe['foo_name'] = dataframe.name + '_foo'
@@ -486,7 +435,6 @@ pipeline(df) -> foo:
 
         assert result.equals(dataframe)
 
-    @pytest.mark.skip(reason='Will be refactored')
     def test_input_output_df_validation(self, dataframe):
         env = self.setup_env(dataframe)
 
@@ -508,7 +456,10 @@ pipeline(df) -> foo:
         env[Symbol('input_t')] = df_input
         env[Symbol('output_t')] = df_output
 
-        src = "pipeline(df: input_t, output_t): .name + '_foo' as foo_name"
+        src = """
+input_t::df
+output_t::pipeline(df): .name + '_foo' as foo_name
+"""
 
         run(src, env=env)
         dataframe['foo_name'] = dataframe.name + '_foo'
@@ -516,7 +467,6 @@ pipeline(df) -> foo:
 
         assert result.equals(dataframe)
 
-    @pytest.mark.skip(reason='Will be refactored')
     def test_invalid_input_output_df_validation(self, dataframe):
         env = self.setup_env(dataframe)
 
@@ -535,7 +485,10 @@ pipeline(df) -> foo:
         env[Symbol('input_t')] = df_input
         env[Symbol('output_t')] = df_output
 
-        src = "pipeline(df: input_t, output_t): .name + '_foo' as foo_name"
+        src = """
+input_t::df
+output_t::pipeline(df): .name + '_foo' as foo_name
+"""
 
         with pytest.raises(ValueError):
             run(src, env=env)
