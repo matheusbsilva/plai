@@ -52,6 +52,9 @@ class PlaiTransformer(InlineTransformer):
     def type_stmt(self, name, *stmt):
         return [Symbol.TYPE, Symbol(name), *stmt]
 
+    def typed_stmt(self, name, *stmt):
+        return [Symbol.TYPED, name, *stmt]
+
     def const_true(self):
         return True
 
@@ -79,8 +82,8 @@ class PlaiTransformer(InlineTransformer):
     def sugar_column(self, name):
         return [Symbol.COLUMN, str(name)]
 
-    def pipeline_args(self, arg, *arg_type):
-        return [arg, *arg_type]
+    def pipeline_args(self, main_arg):
+        return [main_arg]
 
     def pipeline(self, *args):
         pipeline_args, *block = args

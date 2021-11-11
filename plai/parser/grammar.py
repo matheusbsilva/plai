@@ -1,14 +1,20 @@
 import tokenize
 
 grammar = r"""
-?start : (_NL | stmt)*
-       | single_stmt _NL*
+?start : (_NL | typed_stmt)*
+       | typed_single_stmt _NL*
+
+?typed_stmt : var "::" stmt -> typed_stmt
+      | stmt
 
 ?stmt : expr _NL
       | alias_expr _NL
       | assignment _NL
       | type_stmt _NL
       | pipeline
+
+?typed_single_stmt : var "::" single_stmt -> typed_stmt
+                   | single_stmt
 
 ?single_stmt : (expr | alias_expr | assignment | type_stmt)
 
@@ -23,24 +29,26 @@ arguments : argvalue("," argvalue)*
 pipeline : "pipeline" "(" pipeline_args ")" ":" suite
          | "pipeline" "(" pipeline_args ")" "->" (var | string) ":" suite -> pipeline_output_stmt
 
-pipeline_args: expr[":" var]
+pipeline_args : expr
 
-suite : _simple_stmt | _NL _INDENT stmt+ _DEDENT
+suite : _simple_stmt | _NL _INDENT typed_stmt+ _DEDENT
 
-_simple_stmt : single_stmt(";" single_stmt)*
+_simple_stmt : typed_single_stmt(";" typed_single_stmt)*
 
 alias_expr : expr ("as" var)
 
 ?expr: or_expr
 
-?or_expr : and_expr ("or" or_expr)*
+?or_expr : or_expr "or" and_expr
+         | and_expr
 
-?and_expr : not_expr ("and" and_expr)*
+?and_expr : and_expr "and" not_expr
+          | not_expr
 
 ?not_expr : "not" not_expr -> not_op
           | comparison
 
-?comparison : arith_expr _comp_op expr -> bin_op
+?comparison : arith_expr _comp_op arith_expr -> bin_op
             | arith_expr
 
 ?arith_expr : arith_expr _sum_op term -> bin_op

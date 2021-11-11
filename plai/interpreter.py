@@ -42,11 +42,12 @@ def eval(sexpr, e=None, **kwargs):
         if not isinstance(type_definition, dict):
             raise ValueError('type must be a dict')
 
-        e[name] = eval(exp, e, **kwargs)
+        e[name] = type_definition
 
     elif head == Symbol.SLICE_DF:
         cols = [eval(arg, e, **kwargs) for arg in sargs]
 
+        # TODO: return specific element or error
         if any(not isinstance(col, Col) for col in cols):
             raise ValueError('Values must be columns')
 
@@ -89,18 +90,26 @@ def eval(sexpr, e=None, **kwargs):
 
         return pipeline_result
 
+    elif head == Symbol.TYPED:
+        type_def, args = sargs
+        dataframe = eval(args, e, **kwargs)
+
+        if not isinstance(dataframe, pd.DataFrame):
+            raise TypeError('Type can only be checked on DataFrame')
+
+        schema = eval(type_def, e, **kwargs)
+        validation = validate_schema(dataframe, schema)
+
+        if 'errors' in validation:
+            msg = '\n'.join(validation['errors'])
+            raise ValueError(msg)
+
+        return dataframe
+
     elif head == Symbol.PIPELINE:
         pipeline_args, block = sargs
-        arg, *arg_type = pipeline_args
-        dataframe = eval(arg, e, **kwargs)
 
-        if(arg_type):
-            schema = eval(*arg_type, e, **kwargs)
-            validation = validate_schema(dataframe, schema)
-
-            if 'errors' in validation:
-                msg = '\n'.join(validation['errors'])
-                raise ValueError(msg)
+        dataframe = eval(*pipeline_args, e, **kwargs)
 
         for stmt in block:
             dataframe = eval(stmt, e, **{'dataframe': dataframe})
