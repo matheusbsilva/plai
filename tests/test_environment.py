@@ -30,6 +30,7 @@ class TestEnvironment:
         assert Symbol('dropna') in e
         assert Symbol('read_file') in e
         assert Symbol('export_csv') in e
+        assert Symbol('py') in e
 
     def test_pandas_available_on_env(self):
         e = env()

@@ -61,7 +61,9 @@ def eval(sexpr, e=None, **kwargs):
 
     elif head == Symbol.ATTR:
         var, call = sargs
-        return getattr(e[var], str(call))
+
+        var = eval(var, e, **kwargs)
+        return getattr(var, str(call))
 
     elif head == Symbol.ALIAS:
         expr, name = sargs

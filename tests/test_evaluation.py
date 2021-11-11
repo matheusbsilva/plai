@@ -227,7 +227,7 @@ class TestAttrCall:
         e = env()
         e[Symbol('df')] = dataframe
 
-        assert run('df.columns').equals(dataframe.columns)
+        assert run('df.columns.shape') == (4,)
 
 
 class TestSliceDataframe:

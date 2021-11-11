@@ -4,6 +4,7 @@ import pandas as pd
 
 from .symbol import Symbol
 from .modules import frame
+from .modules import PyImporter
 
 
 def env(variables=None):
@@ -51,7 +52,8 @@ def _make_global_env():
         'drop': frame.drop,
         'dropna': frame.dropna,
         'read_file': frame.read_file,
-        'export_csv': frame.export_csv
+        'export_csv': frame.export_csv,
+        'py': PyImporter()
     }
 
     global_ops = {Symbol(k): v for k, v in dic.items()}

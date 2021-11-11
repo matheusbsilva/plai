@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import numpy as np
 import pytest
@@ -6,6 +8,7 @@ from plai.modules import Col
 from plai.modules import drop
 from plai.modules import read_file
 from plai.modules import dropna
+from plai.modules import PyImporter
 
 
 class TestCol:
@@ -136,3 +139,15 @@ class TestDataFrameBuiltinFunctions:
         dataframe['x'] = [1, np.NaN]
 
         assert dropna(Col('x', dataframe), **{'dataframe': dataframe}).equals(dataframe.dropna(subset=['x']))
+
+
+class TestPyImporter:
+    def test_module_import(self):
+        py = PyImporter()
+
+        py.os.path == os.path
+
+    def test_nested_funcion_import(self):
+        py = PyImporter()
+
+        py.pandas.api.types.is_object_dtype = pd.api.types.is_object_dtype

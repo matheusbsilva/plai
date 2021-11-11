@@ -50,6 +50,7 @@ def main():
         src = input('plai >>> ')
 
         res = run(src, e)
+        print(res)
 
 
 if __name__ == '__main__':
