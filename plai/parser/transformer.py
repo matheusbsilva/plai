@@ -34,10 +34,19 @@ class PlaiTransformer(InlineTransformer):
     def arguments(self, *args):
         return [*args]
 
-    def argvalue(self, *args):
+    def mix_args(self, *sargs):
+        return [*sargs]
+
+    def posargs(self, *args):
         return [*args]
 
-    def function_call(self, name, args=[]):
+    def kwargs(self, *args):
+        return [*args]
+
+    def argpair(self, name, *expr):
+        return [Symbol(name), *expr]
+
+    def function_call(self, name, *args):
         return [name, *args]
 
     def attr_call(self, obj, attr):
@@ -53,7 +62,7 @@ class PlaiTransformer(InlineTransformer):
         return [Symbol.TYPE, Symbol(name), *stmt]
 
     def typed_stmt(self, name, *stmt):
-        return [Symbol.TYPED, name, *stmt]
+        return [Symbol.TYPED, Symbol(name), *stmt]
 
     def const_true(self):
         return True
