@@ -30,9 +30,7 @@ def export_csv(dataframe, export_path):
     if not isinstance(dataframe, pd.DataFrame):
         raise TypeError('dataframe must be instance of DataFrame')
 
-    path = dataframe.to_csv(export_path, index=False)
-
-    return path
+    dataframe.to_csv(export_path, index=False)
 
 
 def dropna(*columns, **kwargs):
