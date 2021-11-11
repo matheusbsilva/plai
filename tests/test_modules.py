@@ -179,3 +179,13 @@ class TestPyImporter:
         py = PyImporter(module=os)
 
         assert py.path == os.path
+
+    def test_repr_with_module(self):
+        py = PyImporter(module=os)
+
+        assert py.__repr__() == f"PyImporter('', {os})"
+
+    def test_repr_without_module(self):
+        py = PyImporter('os')
+
+        assert py.__repr__() == "PyImporter('os')"
