@@ -27,11 +27,26 @@ class TestCol:
 
         assert np.array_equal(result, ['foo_fuzz', 'bar_fuzz'])
 
+    def test_col_sum_col_operation(self, dataframe):
+        column = Col('name', dataframe)
+        column_b = Col('dates', dataframe)
+
+        result = column + column_b
+
+        assert result.equals(dataframe.name + dataframe.dates)
+
     def test_col_minus_operation(self, dataframe):
         column = Col('number', dataframe)
         result = column - 1
 
         assert np.array_equal(result, [0, 1])
+
+    def test_col_minus_col_operation(self, dataframe):
+        column = Col('number', dataframe)
+        column_b = Col('floats', dataframe)
+        result = column - column_b
+
+        assert result.equals(dataframe.number - dataframe.floats)
 
     def test_col_mul_operation(self, dataframe):
         column = Col('number', dataframe)
@@ -39,17 +54,38 @@ class TestCol:
 
         assert np.array_equal(result, [2, 4])
 
+    def test_col_mul_col_operation(self, dataframe):
+        column = Col('number', dataframe)
+        column_b = Col('floats', dataframe)
+        result = column * column_b
+
+        assert result.equals(dataframe.number * dataframe.floats)
+
     def test_col_true_div_operation(self, dataframe):
         column = Col('number', dataframe)
         result = column / 2.0
 
         assert np.array_equal(result, [.5, 1])
 
+    def test_col_true_div_col_operation(self, dataframe):
+        column = Col('number', dataframe)
+        column_b = Col('floats', dataframe)
+        result = column / column_b
+
+        assert result.equals(dataframe.number / dataframe.floats)
+
     def test_col_floor_div_operation(self, dataframe):
         column = Col('number', dataframe)
         result = column // 2
 
         assert np.array_equal(result, [0, 1])
+
+    def test_col_floor_div_col_operation(self, dataframe):
+        column = Col('number', dataframe)
+        column_b = Col('floats', dataframe)
+        result = column // column_b
+
+        assert result.equals(dataframe.number // dataframe.floats)
 
     def test_gt_operation(self, dataframe):
         column = Col('number', dataframe)
