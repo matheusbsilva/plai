@@ -3,3 +3,4 @@ pandas==0.25.3
 pytest
 flake8
 coverage
+pytest-cov
