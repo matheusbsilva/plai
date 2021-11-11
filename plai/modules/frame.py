@@ -23,9 +23,6 @@ def drop(*columns, **kwargs):
 def read_file(path, **kwargs):
     sep = ','
 
-    if 'sep' in kwargs:
-        sep = kwargs['sep']
-
     return pd.read_csv(path, sep=sep)
 
 
@@ -33,9 +30,7 @@ def export_csv(dataframe, export_path):
     if not isinstance(dataframe, pd.DataFrame):
         raise TypeError('dataframe must be instance of DataFrame')
 
-    path = dataframe.to_csv(export_path, index=False)
-
-    return path
+    dataframe.to_csv(export_path, index=False)
 
 
 def dropna(*columns, **kwargs):
