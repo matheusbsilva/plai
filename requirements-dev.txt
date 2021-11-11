@@ -2,3 +2,4 @@ lark-parser==0.7.8
 pandas==0.25.3
 pytest
 flake8
+coverage
