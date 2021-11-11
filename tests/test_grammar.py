@@ -182,6 +182,15 @@ class TestFunctionCall:
                                                  [Symbol('bar'), 42],
                                                  [Symbol('buzz'), 55]]
 
+    def test_one_line_typed_stmt(self):
+        assert parse('t::df') == [Symbol.TYPED, Symbol('t'), Symbol('df')]
+
+    def test_multiline_line_typed_stmt(self):
+        src = """
+t::df
+"""
+        assert parse(src) == [Symbol.TYPED, Symbol('t'), Symbol('df')]
+
 
 class TestAssignment:
     def test_assignment_number(self):
@@ -345,46 +354,16 @@ pipeline(df) -> 'test.csv':
             ]
         ]
 
-    @pytest.mark.skip(reason='Will be refactored')
-    def test_basic_typed_df_argument(self):
-        src = "pipeline(df: t): .name as foo_name"
-        assert parse(src) == [
-            Symbol.PIPELINE,
-            [[Symbol('df'), Symbol('t')]],
-            [
-                [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
-            ]
-        ]
-
-    @pytest.mark.skip(reason='Will be refactored')
-    def test_expr_typed_df_argument(self):
-        src = "pipeline(read_file('test.csv'): t): .name as foo_name"
-        assert parse(src) == [
-            Symbol.PIPELINE,
-            [[[Symbol('read_file'), 'test.csv'], Symbol('t')]],
-            [
-                [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
-            ]
-        ]
-
-    @pytest.mark.skip(reason='Will be refactored')
     def test_typed_output_df_argument(self):
-        src = "pipeline(df, output_type): .name as foo_name"
+        src = "output_type::pipeline(df): .name as foo_name"
         assert parse(src) == [
-            Symbol.PIPELINE,
-            [[Symbol('df')], [Symbol('output_type')]],
+            Symbol.TYPED,
+            Symbol('output_type'),
             [
-                [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
-            ]
-        ]
-
-    @pytest.mark.skip(reason='Will be refactored')
-    def test_typed_input_and_output_df_argument(self):
-        src = "pipeline(df: t, output_type): .name as foo_name"
-        assert parse(src) == [
-            Symbol.PIPELINE,
-            [[Symbol('df'), Symbol('t')], [Symbol('output_type')]],
-            [
-                [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
+                Symbol.PIPELINE,
+                [Symbol('df')],
+                [
+                    [Symbol.ALIAS, [Symbol.COLUMN, 'name'], Symbol('foo_name')]
+                ],
             ]
         ]

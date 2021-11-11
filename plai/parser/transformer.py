@@ -52,6 +52,9 @@ class PlaiTransformer(InlineTransformer):
     def type_stmt(self, name, *stmt):
         return [Symbol.TYPE, Symbol(name), *stmt]
 
+    def typed_stmt(self, name, *stmt):
+        return [Symbol.TYPED, name, *stmt]
+
     def const_true(self):
         return True
 
@@ -81,9 +84,6 @@ class PlaiTransformer(InlineTransformer):
 
     def pipeline_args(self, main_arg, *args):
         return [main_arg, *args]
-
-    def pipeline_main_arg(self, arg, *arg_type):
-        return [arg, *arg_type]
 
     def pipeline(self, *args):
         pipeline_args, *block = args
