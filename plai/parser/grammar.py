@@ -27,7 +27,7 @@ arguments : argvalue("," argvalue)*
 ?argvalue : expr("=" expr)?
 
 pipeline : "pipeline" "(" pipeline_args ")" ":" suite
-         | "pipeline" "(" pipeline_args ")" "->" (var | string) ":" suite -> pipeline_output_stmt
+         | "pipeline" "(" pipeline_args ")" "as" (var | string) ":" suite -> pipeline_output_stmt
 
 pipeline_args : expr
 
