@@ -145,9 +145,14 @@ class TestPyImporter:
     def test_module_import(self):
         py = PyImporter()
 
-        py.os.path == os.path
+        assert py.os.path._module == os.path
 
     def test_nested_funcion_import(self):
         py = PyImporter()
 
-        py.pandas.api.types.is_object_dtype = pd.api.types.is_object_dtype
+        assert py.pandas.api.types.is_object_dtype == pd.api.types.is_object_dtype
+
+    def test_import_specifying_module(self):
+        py = PyImporter(module=os)
+
+        assert py.path == os.path
