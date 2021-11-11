@@ -1,5 +1,4 @@
 [run]
-branch = True
 source = .
 
 [report]
@@ -11,3 +10,4 @@ exclude_lines =
 ignore_errors = True
 omit =
     tests/*
+    setup.py
