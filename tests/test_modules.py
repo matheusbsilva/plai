@@ -140,6 +140,14 @@ class TestDataFrameBuiltinFunctions:
 
         assert dropna(Col('x', dataframe), **{'dataframe': dataframe}).equals(dataframe.dropna(subset=['x']))
 
+    def test_dropna_dataframe_type_invalid(self, dataframe):
+        with pytest.raises(TypeError):
+            dropna(Col('x', dataframe), **{'dataframe': 'foo'})
+
+    def test_dropna_col_type_invalid(self, dataframe):
+        with pytest.raises(TypeError):
+            dropna('foo', **{'dataframe': dataframe})
+
 
 class TestPyImporter:
     def test_module_import(self):

@@ -23,9 +23,6 @@ def drop(*columns, **kwargs):
 def read_file(path, **kwargs):
     sep = ','
 
-    if 'sep' in kwargs:
-        sep = kwargs['sep']
-
     return pd.read_csv(path, sep=sep)
 
 
