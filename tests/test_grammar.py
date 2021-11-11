@@ -294,7 +294,7 @@ pipeline(bar):
 
     def test_var_output_stmt_multiple_line_for_pipeline(self):
         src = """
-pipeline(df) -> foo:
+pipeline(df) as foo:
     .name as foo_name
 """
         assert parse(src) == [
@@ -310,7 +310,7 @@ pipeline(df) -> foo:
         ]
 
     def test_var_output_stmt_single_line_for_pipeline(self):
-        src = "pipeline(df) -> foo: .name as foo_name"
+        src = "pipeline(df) as foo: .name as foo_name"
         assert parse(src) == [
             Symbol.OUTPUT,
             Symbol('foo'),
@@ -325,7 +325,7 @@ pipeline(df) -> foo:
 
     def test_string_output_stmt_multiple_line_for_pipeline(self):
         src = """
-pipeline(df) -> 'test.csv':
+pipeline(df) as 'test.csv':
     .name as foo_name
 """
         assert parse(src) == [
@@ -341,7 +341,7 @@ pipeline(df) -> 'test.csv':
         ]
 
     def test_string_output_stmt_single_line_for_pipeline(self):
-        src = "pipeline(df) -> 'test.csv': .name as foo_name"
+        src = "pipeline(df) as 'test.csv': .name as foo_name"
         assert parse(src) == [
             Symbol.OUTPUT,
             'test.csv',

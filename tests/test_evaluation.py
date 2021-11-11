@@ -345,7 +345,7 @@ class TestOutputStmtPipeline:
         path = tmp_path / 'test.csv'
 
         src = """
-pipeline(df) -> '{path}':
+pipeline(df) as '{path}':
     .name + '_foo' as foo_name
 """.format(path=path)
 
@@ -361,7 +361,7 @@ pipeline(df) -> '{path}':
         env = self.setup_env(dataframe)
         path = tmp_path / 'test.csv'
 
-        src = "pipeline(df) -> '{path}': .name + '_foo' as foo_name".format(path=path)
+        src = "pipeline(df) as '{path}': .name + '_foo' as foo_name".format(path=path)
 
         run(src, env=env)
         dataframe['foo_name'] = dataframe.name + '_foo'
@@ -373,7 +373,7 @@ pipeline(df) -> '{path}':
         self.setup_env(dataframe)
         path = tmp_path / 'test.xlsx'
 
-        src = "pipeline(df) -> '{path}': .name + '_foo' as foo_name".format(path=path)
+        src = "pipeline(df) as '{path}': .name + '_foo' as foo_name".format(path=path)
 
         with pytest.raises(ValueError):
             run(src)
@@ -382,7 +382,7 @@ pipeline(df) -> '{path}':
         env = self.setup_env(dataframe)
 
         src = """
-pipeline(df) -> foo:
+pipeline(df) as foo:
     .name + '_foo' as foo_name
 """
 
@@ -395,7 +395,7 @@ pipeline(df) -> foo:
     def test_var_output_stmt_for_single_line_pipeline(self, dataframe):
         env = self.setup_env(dataframe)
 
-        src = "pipeline(df) -> foo: .name + '_foo' as foo_name"
+        src = "pipeline(df) as foo: .name + '_foo' as foo_name"
 
         run(src, env=env)
         dataframe['foo_name'] = dataframe.name + '_foo'
