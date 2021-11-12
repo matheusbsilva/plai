@@ -38,7 +38,7 @@ class PlaiTransformer(InlineTransformer):
         return [*sargs]
 
     def posargs(self, *args):
-        return [*args]
+        return [*args, []]
 
     def kwargs(self, *args):
         return [*args]
@@ -46,8 +46,8 @@ class PlaiTransformer(InlineTransformer):
     def argpair(self, name, *expr):
         return [Symbol(name), *expr]
 
-    def function_call(self, name, *args):
-        return [name, *args]
+    def function_call(self, name, args=[]):
+        return [Symbol.FUNCTION, name, *args]
 
     def attr_call(self, obj, attr):
         return [Symbol.ATTR, obj, Symbol(attr)]
