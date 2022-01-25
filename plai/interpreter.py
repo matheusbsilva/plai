@@ -118,11 +118,25 @@ def eval(sexpr, e=None, **kwargs):
 
         return dataframe
 
+    elif head == Symbol.FUNCTION:
+        func_call, *func_args = sargs
+        proc = eval(func_call, e, **kwargs)
+        posargs = ()
+
+        if func_args:
+            *rposargs, rkwargs = func_args
+            posargs = [eval(arg, e, **kwargs) for arg in rposargs]
+
+            for rkwarg in rkwargs:
+                key, value = rkwarg
+                kwargs[str(key)] = eval(value, e, **kwargs)
+
+        return proc(*posargs, **kwargs)
     else:
         proc = eval(head, e, **kwargs)
         vals = [eval(sarg, e, **kwargs) for sarg in sargs]
 
-        return proc(*vals, **kwargs)
+        return proc(*vals)
 
 
 def run(src, env=None, **kwargs):

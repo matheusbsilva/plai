@@ -4,7 +4,7 @@ grammar = r"""
 ?start : (_NL | typed_stmt)*
        | typed_single_stmt _NL*
 
-?typed_stmt : var "::" stmt -> typed_stmt
+?typed_stmt : NAME "::" stmt -> typed_stmt
       | stmt
 
 ?stmt : expr _NL
@@ -13,7 +13,7 @@ grammar = r"""
       | type_stmt _NL
       | pipeline
 
-?typed_single_stmt : var "::" single_stmt -> typed_stmt
+?typed_single_stmt : NAME "::" single_stmt -> typed_stmt
                    | single_stmt
 
 ?single_stmt : (expr | alias_expr | assignment | type_stmt)
@@ -22,9 +22,13 @@ assignment : NAME "=" expr
 
 type_stmt : "type" NAME "=" expr
 
-arguments : argvalue("," argvalue)*
+arguments : expr("," expr)* "," kwargs -> mix_args
+          | expr("," expr)* -> posargs
+          | kwargs
 
-?argvalue : expr("=" expr)?
+kwargs : argpair("," argpair)*
+
+argpair : NAME "=" expr
 
 pipeline : "pipeline" "(" pipeline_args ")" ":" suite
          | "pipeline" "(" pipeline_args ")" "as" (var | string) ":" suite -> pipeline_output_stmt
