@@ -7,9 +7,9 @@ __version__ = re.findall('__version__ = "(.*)"',
 
 
 setuptools.setup(
-    name='plAI',
+    name='plai',
     version=__version__,
-    description='Programming language to create machine learning pipelines.',
+    description='Programming language to create data manipulation pipelines.',
     url='https://github.com/matheusbsilva/plai',
     long_description=codecs.open('README.md', 'rb', 'utf8').read(),
     long_description_content_type='text/markdown',
@@ -23,6 +23,6 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires=[
         "lark-parser >= 0.7.8",
-        "pandas >= 0.25.3"
+        "pandas >= 1.4.0"
     ]
 )
