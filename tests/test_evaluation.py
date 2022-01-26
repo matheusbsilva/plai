@@ -260,6 +260,25 @@ class TestTypedDataframe:
         e[Symbol('df')] = dataframe
         return e
 
+    def test_type_matching_on_dataframe_load_into_var(self, csv_file_comma):
+        df_type = {
+            'name': 'str',
+            'number': 'int',
+            'floats': 'float',
+            'dates': 'str'
+        }
+        e = env()
+        e[Symbol('t')] = df_type
+        path = str(csv_file_comma)
+
+        src = """
+t::df = read_file("%s")
+""" % path
+        run(src, env=e)
+        result = e[Symbol('df')]
+
+        assert result.equals(read_file(path))
+
     def test_type_matching_dataframe_schema(self, dataframe):
         df_type = {
             'name': 'str',

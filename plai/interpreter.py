@@ -29,6 +29,8 @@ def eval(sexpr, e=None, **kwargs):
         var, exp = sargs
         e[var] = eval(exp, e, **kwargs)
 
+        return e[var]
+
     elif head == Symbol.LIST:
         return [eval(arg, e, **kwargs) for arg in sargs]
 
