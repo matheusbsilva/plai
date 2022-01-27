@@ -370,3 +370,15 @@ pipeline(df) as 'test.csv':
                 ],
             ]
         ]
+
+    def test_dataframe_attr_call(self):
+        src = "$.bar"
+
+        assert parse(src) == [Symbol.DF_ATTR_CALL, Symbol('bar')]
+
+    def test_dataframe_attr_call_function(self):
+        src = "$.foo()"
+
+        assert parse(src) == [
+            Symbol.FUNCTION, [Symbol.DF_ATTR_CALL, Symbol('foo')]
+        ]
