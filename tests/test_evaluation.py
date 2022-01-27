@@ -536,3 +536,21 @@ class TestTypeStmt:
     def test_type_expr_is_not_dict(self):
         with pytest.raises(ValueError):
             run("type foo = 'bar'")
+
+
+class TestAttrCallOnDataframe:
+    def test_attr_call_on_datafram_for_pipeline(self, dataframe):
+        e = env()
+        e[Symbol('df')] = dataframe
+
+        src = "pipeline(df): $.shape"
+
+        assert run(src, env=e) == dataframe.shape
+
+    def test_function_attr_call_on_dataframe_for_pipeline(self, dataframe):
+        e = env()
+        e[Symbol('df')] = dataframe
+
+        src = "pipeline(df): $.reset_index()"
+
+        assert run(src, env=e).equals(dataframe.reset_index())

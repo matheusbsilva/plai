@@ -120,10 +120,16 @@ def eval(sexpr, e=None, **kwargs):
 
         return dataframe
 
+    elif head == Symbol.DF_ATTR_CALL:
+        dataframe = kwargs['dataframe']
+
+        return getattr(dataframe, str(*sargs))
+
     elif head == Symbol.FUNCTION:
         func_call, *func_args = sargs
         proc = eval(func_call, e, **kwargs)
         posargs = ()
+        nkwargs = {}
 
         if func_args:
             *rposargs, rkwargs = func_args
@@ -136,8 +142,6 @@ def eval(sexpr, e=None, **kwargs):
                     value = value()
 
                 posargs.append(value)
-
-            nkwargs = {}
 
             for rkwarg in rkwargs:
                 key, key_raw_value = rkwarg
