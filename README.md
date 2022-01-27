@@ -1,4 +1,4 @@
-# plAI
+# plai [![codecov](https://codecov.io/gh/matheusbsilva/plai/branch/development/graph/badge.svg?token=Z56KFD6WPY)](https://codecov.io/gh/matheusbsilva/plai)
 
 Plai is a programming language to create machine learning pipelines 
 with focus on data treatment, validation, and generation of integration tests to ensure more confiability to machine learning systems on production.
