@@ -7,6 +7,7 @@ from plai.modules import drop
 from plai.modules import read_file
 from plai.environment import env
 from plai.symbol import Symbol
+from plai.parser import parse
 
 
 class TestAssigment:
@@ -141,7 +142,19 @@ pipeline(df):
 """
 
         assert run(src, env=e).equals(
-            drop(Col('name', dataframe), Col('floats', dataframe), **{'dataframe': dataframe}))
+            drop(Col('name', dataframe), Col('floats', dataframe), dataframe=dataframe))
+
+    def test_pipeline_with_function_call(self, dataframe):
+        e = env()
+        e[Symbol('df')] = dataframe
+        src = """
+pipeline(df):
+    pd.to_datetime(.dates) as dates
+"""
+        result = run(src, env=e)
+        dataframe.dates = pd.to_datetime(dataframe.dates)
+
+        assert result.equals(dataframe)
 
 
 class TestAliasEvaluation:
@@ -153,7 +166,7 @@ class TestAliasEvaluation:
 
     def test_alias_create_column_with_expr_result(self, dataframe):
         df_result = dataframe.assign(foo=dataframe.name + '_foo')
-        result = run(".name + '_foo' as foo", **{'dataframe': dataframe})
+        result = run(".name + '_foo' as foo", dataframe=dataframe)
 
         assert result.equals(df_result)
 
