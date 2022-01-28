@@ -3,11 +3,9 @@ import pandas as pd
 
 from plai.interpreter import run
 from plai.modules import Col
-from plai.modules import drop
 from plai.modules import read_file
 from plai.environment import env
 from plai.symbol import Symbol
-from plai.parser import parse
 
 
 class TestAssigment:
@@ -116,37 +114,41 @@ class TestPipeline:
         with pytest.raises(NameError):
             src = """
 pipeline(df):
-    drop(.name)
+    .name + 'bar'
 """
             run(src)
 
     def test_pipeline_execute_stmts(self, dataframe):
         e = env()
-        e[Symbol('df')] = dataframe
+        e[Symbol('df')] = dataframe.copy()
         src = """
 pipeline(df):
-    drop(.name)
+    .name + 'bar' as name
 """
         res = run(src, env=e)
 
-        assert res.equals(
-            drop(Col('name', dataframe), **{'dataframe': dataframe}))
+        dataframe.name = dataframe.name + 'bar'
+
+        assert res.equals(dataframe)
 
     def test_pipeline_execute_multiple_stmts(self, dataframe):
         e = env()
-        e[Symbol('df')] = dataframe
+        e[Symbol('df')] = dataframe.copy()
+
         src = """
 pipeline(df):
-    drop(.name)
-    drop(.floats)
+    .name + 'bar' as name
+    .floats + 1 as floats
 """
 
-        assert run(src, env=e).equals(
-            drop(Col('name', dataframe), Col('floats', dataframe), dataframe=dataframe))
+        dataframe.name = dataframe.name + 'bar'
+        dataframe.floats = dataframe.floats + 1
+
+        assert run(src, env=e).equals(dataframe)
 
     def test_pipeline_with_function_call(self, dataframe):
         e = env()
-        e[Symbol('df')] = dataframe
+        e[Symbol('df')] = dataframe.copy()
         src = """
 pipeline(df):
     pd.to_datetime(.dates) as dates
@@ -175,16 +177,16 @@ class TestColEvaluation:
     def test_sugar_col_returns_Col_instance(self, dataframe):
         e = env()
         df_symbol = Symbol('df')
-        e[df_symbol] = dataframe
+        e[df_symbol] = dataframe.copy()
 
-        assert isinstance(run('.col', **{'dataframe': df_symbol}), Col)
+        assert isinstance(run('.col', dataframe=df_symbol), Col)
 
     def test_sugar_col_returns_Col_with_right_name(self, dataframe):
         e = env()
         df_symbol = Symbol('df')
-        e[df_symbol] = dataframe
+        e[df_symbol] = dataframe.copy()
 
-        col = run('.col', **{'dataframe': df_symbol})
+        col = run('.col', dataframe=df_symbol)
         assert col.name == 'col'
 
 
@@ -225,13 +227,13 @@ class TestMultipleStmts:
         src = """
 df = read_file("%s")
 pipeline(df):
-    drop(.name)
+    .name + 'bar' as name
 """ % path
 
         df_res = read_file(path)
-        result = drop(Col('name', **{'dataframe': df_res}), **{'dataframe': df_res})
+        df_res.name = df_res.name + 'bar'
 
-        assert run(src).equals(result)
+        assert run(src).equals(df_res)
 
 
 class TestAttrCall:

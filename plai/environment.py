@@ -42,8 +42,6 @@ def _make_global_env():
         'round': round,
         'len': len,
         'begin': lambda *x: x[-1],
-        'drop': frame.drop,
-        'dropna': frame.dropna,
         'read_file': frame.read_file,
         'export_csv': frame.export_csv,
         'py': PyImporter()

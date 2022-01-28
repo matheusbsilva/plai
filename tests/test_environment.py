@@ -26,8 +26,6 @@ class TestEnvironment:
     def test_builtin_functions_exist_in_default_env(self):
         e = env()
 
-        assert Symbol('drop') in e
-        assert Symbol('dropna') in e
         assert Symbol('read_file') in e
         assert Symbol('export_csv') in e
         assert Symbol('py') in e
