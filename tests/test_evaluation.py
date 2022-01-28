@@ -113,7 +113,7 @@ class TestPipeline:
     def test_pipeline_raise_error_on_undeclared_dataframe(self):
         with pytest.raises(NameError):
             src = """
-pipeline(df):
+pipeline(fuzz):
     .name + 'bar'
 """
             run(src)

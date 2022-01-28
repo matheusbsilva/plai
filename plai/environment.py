@@ -41,6 +41,7 @@ def _make_global_env():
         'abs': abs,
         'round': round,
         'len': len,
+        'sum': sum,
         'begin': lambda *x: x[-1],
         'read_file': frame.read_file,
         'export_csv': frame.export_csv,
