@@ -127,6 +127,11 @@ class TestCol:
 
         assert result.equals(pd.Series(['foo'], index=[0]))
 
+    def test_get_attr_on_column(self, dataframe):
+        column = Col('name', dataframe)
+
+        assert column.str.upper().equals(dataframe.name.str.upper())
+
 
 class TestDataFrameBuiltinFunctions:
 

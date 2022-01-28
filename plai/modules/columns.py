@@ -3,6 +3,9 @@ class Col:
         self.dataframe = dataframe
         self.name = name
 
+    def __getattr__(self, attr):
+        return getattr(self(), attr)
+
     def __call__(self):
         return self.dataframe[self.name]
 
