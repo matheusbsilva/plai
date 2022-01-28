@@ -22,7 +22,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     python_requires='>=3.6',
     install_requires=[
-        "lark-parser >= 0.7.8",
-        "pandas >= 1.1.5"
+        "lark-parser>=0.7.8",
+        "pandas>=1.1.5"
     ]
 )
