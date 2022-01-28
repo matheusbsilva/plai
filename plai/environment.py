@@ -1,7 +1,10 @@
 import operator as op
 
+import pandas as pd
+
 from .symbol import Symbol
 from .modules import frame
+from .modules import PyImporter
 
 
 def env(variables=None):
@@ -22,22 +25,27 @@ def _make_global_env():
         '-': op.sub,
         '*': op.mul,
         '/': op.truediv,
-        'drop': frame.drop,
-        'dropna': frame.dropna,
-        'read_file': frame.read_file,
-        'export_csv': frame.export_csv,
-        'begin': lambda *x: x[-1],
+        '//': op.floordiv,
+        '>': op.gt,
+        '<': op.lt,
+        '>=': op.ge,
+        '<=': op.le,
+        '==': op.eq,
+        'not': op.not_,
+        'and': op.and_,
+        'or': op.or_,
+        'pd': pd,
         'print': print,
         'max': max,
         'min': min,
         'abs': abs,
         'round': round,
         'len': len,
-        '>': op.gt,
-        '<': op.lt,
-        '>=': op.ge,
-        '<=': op.le,
-        '==': op.eq
+        'sum': sum,
+        'begin': lambda *x: x[-1],
+        'read_file': frame.read_file,
+        'export_csv': frame.export_csv,
+        'py': PyImporter()
     }
 
     global_ops = {Symbol(k): v for k, v in dic.items()}

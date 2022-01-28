@@ -20,7 +20,7 @@ def parse_cli():
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('file', nargs='?',
                         type=argparse.FileType('r'),
-                        default=None, help='.ai file to be executed')
+                        default=None, help='.plai file to be executed')
 
     return parser
 
@@ -38,7 +38,6 @@ def main():
 
         if src:
             ast = parse(src)
-            print(ast)
             res = eval(ast, e)
 
         print(res)
@@ -51,8 +50,6 @@ def main():
         src = input('plai >>> ')
 
         res = run(src, e)
-
-        # print AST for debugging
         print(res)
 
 
