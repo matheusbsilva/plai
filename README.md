@@ -2,6 +2,13 @@
 
 Plai is a domain specific programming language(DSL) to create data manipulation pipelines with focus on data treatment, validation and easier syntax. It uses [pandas](https://pandas.pydata.org) as data manipulation engine so it is meant to work with small data.
 
+# Installation
+
+The package can be installed using pip:
+```
+pip install plai
+```
+
 ## Examples 
 
 Example of pipeline with basic data manipulation using Plai:
