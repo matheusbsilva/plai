@@ -3,7 +3,7 @@ import codecs
 import re
 
 __version__ = re.findall('__version__ = "(.*)"',
-                         open('plai/__init__.py').read())
+                         open('plai/__init__.py').read())[0]
 
 
 setuptools.setup(
