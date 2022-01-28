@@ -10,7 +10,7 @@ Example of pipeline with basic data manipulation using Plai:
 df = read_file('issues.csv')
 
 pipeline(df) as 'gh_pct_issues_by_language.csv':
-    $.groupby(.name).sum()
+    $.groupby(.name, as_index=False).sum()
     (.count/sum(.count)) * 100 as pct
     {.name, .count, .pct}
 ```
