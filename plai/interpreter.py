@@ -116,24 +116,43 @@ def eval(sexpr, e=None, **kwargs):
         dataframe = eval(*pipeline_args, e, **kwargs)
 
         for stmt in block:
-            dataframe = eval(stmt, e, **{'dataframe': dataframe})
+            dataframe = eval(stmt, e, dataframe=dataframe)
 
         return dataframe
+
+    elif head == Symbol.DF_ATTR_CALL:
+        dataframe = kwargs['dataframe']
+
+        return getattr(dataframe, str(*sargs))
 
     elif head == Symbol.FUNCTION:
         func_call, *func_args = sargs
         proc = eval(func_call, e, **kwargs)
         posargs = ()
+        nkwargs = {}
 
         if func_args:
             *rposargs, rkwargs = func_args
-            posargs = [eval(arg, e, **kwargs) for arg in rposargs]
+            posargs = []
+
+            for arg in rposargs:
+                value = eval(arg, e, **kwargs)
+
+                if(isinstance(value, Col)):
+                    value = value()
+
+                posargs.append(value)
 
             for rkwarg in rkwargs:
-                key, value = rkwarg
-                kwargs[str(key)] = eval(value, e, **kwargs)
+                key, key_raw_value = rkwarg
+                key_value = eval(key_raw_value, e, **kwargs)
 
-        return proc(*posargs, **kwargs)
+                if(isinstance(key_value, Col)):
+                    key_value = key_value()
+
+                nkwargs[str(key)] = key_value
+
+        return proc(*posargs, **nkwargs)
     else:
         proc = eval(head, e, **kwargs)
         vals = [eval(sarg, e, **kwargs) for sarg in sargs]

@@ -91,6 +91,9 @@ class PlaiTransformer(InlineTransformer):
     def sugar_column(self, name):
         return [Symbol.COLUMN, str(name)]
 
+    def dataframe_attr_call(self, name):
+        return [Symbol.DF_ATTR_CALL, Symbol(name)]
+
     def pipeline_args(self, main_arg):
         return [main_arg]
 

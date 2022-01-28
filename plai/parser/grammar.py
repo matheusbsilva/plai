@@ -66,6 +66,7 @@ sugar_column : "." NAME
 
 ?atom_expr : atom_expr "(" arguments? ")" -> function_call
            | atom_expr "." NAME -> attr_call
+           | "$" "." NAME -> dataframe_attr_call
            | sugar_column
            | atom
 
