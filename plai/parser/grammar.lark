@@ -1,6 +1,3 @@
-import tokenize
-
-grammar = r"""
 ?start : (_NL | typed_stmt)*
        | typed_single_stmt _NL*
 
@@ -73,8 +70,8 @@ sugar_column : "." NAME
 
 ?atom : "(" expr ")"
       | "[" [expr ("," expr)*] "]" -> list_expr
-      | "{{" key_content "}}"
-      | NUMBER -> number
+      | "{" key_content "}"
+      | number
       | string
       | var
       | "True" -> const_true
@@ -87,22 +84,22 @@ sugar_column : "." NAME
 _key_value_list : key_value("," key_value)*[","]
 key_value : expr ":" expr
 
+number: DEC_NUMBER | HEX_NUMBER | BIN_NUMBER | OCT_NUMBER | FLOAT_NUMBER | IMAG_NUMBER
+
 var : NAME
 
-string : STRING
+string: STRING | LONG_STRING
 
 !_sum_op :  "+" | "-"
 !_mult_op : "*" | "/" | "//"
 !_comp_op : "<" | ">" | "==" | ">=" | "<=" | "!="
 
-NUMBER : /{number}/
-STRING : /{string}/
-NAME : /{name}/
+_NL: /(\r?\n[\t ]*)+/
 
 %import common.WS_INLINE
+%import python (COMMENT, NAME, STRING, LONG_STRING)
+%import python (DEC_NUMBER, HEX_NUMBER, OCT_NUMBER, BIN_NUMBER, FLOAT_NUMBER, IMAG_NUMBER)
 
 %declare _INDENT _DEDENT
 %ignore WS_INLINE
-
-_NL: /(\r?\n[\t ]*)+/
-""".format(number=tokenize.Number, string=tokenize.String, name=tokenize.Name)
+%ignore COMMENT

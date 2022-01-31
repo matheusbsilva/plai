@@ -1,8 +1,9 @@
 from lark import Lark
 from lark.indenter import Indenter
 
-from .grammar import grammar
 from .transformer import PlaiTransformer
+
+GRAMMAR_PATH = 'grammar.lark'
 
 
 class TreeIndenter(Indenter):
@@ -17,11 +18,12 @@ class TreeIndenter(Indenter):
 def parse(src, return_tree=False):
 
     if return_tree is True:
-        parser = Lark(grammar, parser='lalr', postlex=TreeIndenter())
+        parser = Lark.open(grammar_filename=GRAMMAR_PATH, rel_to=__file__, parser='lalr', postlex=TreeIndenter())
         return parser.parse(src)
 
-    plai_parser = Lark(grammar,
-                       parser='lalr',
-                       transformer=PlaiTransformer(),
-                       postlex=TreeIndenter())
+    plai_parser = Lark.open(grammar_filename=GRAMMAR_PATH,
+                            rel_to=__file__,
+                            parser='lalr',
+                            transformer=PlaiTransformer(),
+                            postlex=TreeIndenter())
     return plai_parser.parse(src)
